@@ -12,6 +12,7 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool interact;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -42,6 +43,12 @@ namespace StarterAssets
 		public void OnSprint(InputValue value)
 		{
 			SprintInput(value.isPressed);
+		}
+		
+		public void OnInteract(InputValue value)
+		{
+			// 当按键按下时，interact 变为 true；松开变为 false
+			interact = value.isPressed;
 		}
 #endif
 
