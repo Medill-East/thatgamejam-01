@@ -13,6 +13,7 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 		public bool interact;
+		public bool callLight;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -49,6 +50,12 @@ namespace StarterAssets
 		{
 			// 当按键按下时，interact 变为 true；松开变为 false
 			interact = value.isPressed;
+		}
+		
+		public void OnCallLight(InputValue value)
+		{
+			// 当按键按下时，interact 变为 true；松开变为 false
+			callLight = value.isPressed;
 		}
 #endif
 
