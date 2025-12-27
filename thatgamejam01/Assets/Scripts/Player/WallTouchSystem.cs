@@ -25,6 +25,8 @@ public class WallTouchSystem : MonoBehaviour
     public float minTouchDistance = 0.3f; 
 
     [Header("手掌微调")]
+    [Tooltip("手掌接触点（例如指尖或掌心）。如果不填则默认使用 Hand Container")]
+    public Transform visualContactPoint; 
     public Vector3 handOffset = new Vector3(0, 0, 0.05f); 
 
     [Header("动画参数")]
@@ -155,7 +157,29 @@ public class WallTouchSystem : MonoBehaviour
 
                 // Debug.Log($"[{handName}] 摸到了！墙在 x:{localHitPoint.x:F2}");
 
-                if (wireframeScript != null) wireframeScript.UpdateTouchState(true, hit.point, hit.normal);
+                // --- 贴花生成逻辑优化 (投影法) ---
+                // 只有当手部视觉上非常接近墙面时 (< 10cm)，才生成贴花
+                if (Vector3.Distance(handContainer.position, _targetPos) < 0.1f)
+                {
+                    // 1. 确定参考点 (如果没有手动指定 Tip，就用 Container)
+                    Vector3 refPoint = (visualContactPoint != null) ? visualContactPoint.position : handContainer.position;
+
+                    // 2. 构建墙面平面
+                    Plane wallPlane = new Plane(hit.normal, hit.point);
+
+                    // 3. 将手的位置投影到墙面上，这才是最精确的触碰点
+                    Vector3 projectedPoint = wallPlane.ClosestPointOnPlane(refPoint);
+
+                    if (wireframeScript != null) 
+                        wireframeScript.UpdateTouchState(GetInstanceID(), true, projectedPoint, hit.normal);
+                }
+                else
+                {
+                    // 手还在飞行中，不需要生成
+                   if (wireframeScript != null) 
+                        wireframeScript.UpdateTouchState(GetInstanceID(), false, Vector3.zero, Vector3.zero);
+                }
+                
                 return; 
             }
             else
@@ -174,7 +198,7 @@ public class WallTouchSystem : MonoBehaviour
             _isTouching = false;
             // 注意：如果两只手公用一个 Wireframe 脚本，一只手松开可能会打断另一只手
             // 建议给每只手配一个单独的 PlayerTouchWireframe2，或者忽略这个Bug
-            if (wireframeScript != null) wireframeScript.UpdateTouchState(false, Vector3.zero, Vector3.zero);
+            if (wireframeScript != null) wireframeScript.UpdateTouchState(GetInstanceID(), false, Vector3.zero, Vector3.zero);
         }
     }
 

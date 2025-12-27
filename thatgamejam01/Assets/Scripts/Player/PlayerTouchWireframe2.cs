@@ -7,60 +7,80 @@ public class PlayerTouchWireframe2 : MonoBehaviour
     [Header("生成设置")]
     [Tooltip("摸墙多久后生成线框？")]
     public float touchDelay = 0.5f; 
+    [Tooltip("最小生成间距（米），防止原地生成太多")]
+    public float minSpawnDistance = 0.2f;
     public GameObject decalPrefab; // 拖入你的 Wireframe 贴花预制体
 
-    // 内部状态
-    private float _timer = 0f;
-    private bool _isTouching = false;
-    private Vector3 _hitPoint;
-    private Vector3 _hitNormal;
+    // 内部状态类
+    private class TouchSource
+    {
+        public float timer;
+        public Vector3 point;
+        public Vector3 normal;
+        public bool isTouching;
+        public Vector3 lastSpawnPoint = Vector3.negativeInfinity; // 记录上次生成的位置
+    }
+
+    // 使用字典管理多路输入 (Key: SourceID, Value: State)
+    private Dictionary<int, TouchSource> _sources = new Dictionary<int, TouchSource>();
 
     // --- 供外部调用的接口 ---
-    public void UpdateTouchState(bool isTouching, Vector3 point, Vector3 normal)
+    public void UpdateTouchState(int sourceID, bool isTouching, Vector3 point, Vector3 normal)
     {
-        // 状态发生改变时（比如刚从没摸变成摸，或者摸的位置变了）
-        if (isTouching != _isTouching)
+        if (!_sources.ContainsKey(sourceID))
         {
-            _timer = 0f; // 重置计时器
+            _sources[sourceID] = new TouchSource();
         }
 
-        _isTouching = isTouching;
+        TouchSource source = _sources[sourceID];
+
+        // 状态发生改变时重置计时器
+        if (source.isTouching != isTouching)
+        {
+            source.timer = 0f;
+        }
+
+        source.isTouching = isTouching;
         
         if (isTouching)
         {
-            _hitPoint = point;
-            _hitNormal = normal;
+            source.point = point;
+            source.normal = normal;
         }
     }
 
     void Update()
     {
-        if (_isTouching)
+        // 遍历所有输入源
+        foreach (var kvp in _sources)
         {
-            _timer += Time.deltaTime;
+            TouchSource source = kvp.Value;
 
-            if (_timer >= touchDelay)
+            if (source.isTouching)
             {
-                SpawnWireframe();
-                _timer = 0f; // 重置，避免一帧生成一个，如果你想持续生成可以调整这里
-                // 或者: _isTouching = false; // 生成一次后就停止，直到下次重新摸墙
+                source.timer += Time.deltaTime;
+
+                // 条件：时间到了 && 距离上次生成点够远
+                if (source.timer >= touchDelay && Vector3.Distance(source.point, source.lastSpawnPoint) > minSpawnDistance)
+                {
+                    SpawnWireframe(source.point, source.normal);
+                    source.lastSpawnPoint = source.point; // 更新生成点
+                    source.timer = 0f; 
+                }
             }
-        }
-        else
-        {
-            _timer = 0f;
+            else
+            {
+                source.timer = 0f;
+            }
         }
     }
 
-    void SpawnWireframe()
+    void SpawnWireframe(Vector3 point, Vector3 normal)
     {
         if (decalPrefab != null)
         {
-            // 生成贴花，并让它朝向墙壁法线
-            Quaternion rotation = Quaternion.LookRotation(_hitNormal);
-            Instantiate(decalPrefab, _hitPoint, rotation);
-            
-            // Debug.Log("生成线框！");
+            Quaternion rotation = Quaternion.LookRotation(normal);
+            Instantiate(decalPrefab, point, rotation);
         }
     }
 }

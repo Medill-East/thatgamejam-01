@@ -593,8 +593,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32d1b76b356617c4ba086f998f446166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchDelay: 0.5
-  decalPrefab: {fileID: 669690013}
+  touchDelay: 0
+  minSpawnDistance: 0.5
+  decalPrefab: {fileID: 2989893091750982822, guid: de558d3dca4bd554e9822057bc077817, type: 3}
 --- !u!114 &267901510
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,6 +620,7 @@ MonoBehaviour:
   sphereRadius: 0.2
   maxDetectionAngle: 45
   minTouchDistance: 0.1
+  visualContactPoint: {fileID: 1475252601}
   handOffset: {x: 0, y: 0, z: 0.05}
   moveSpeed: 1
   retractSmoothTime: 0.3
@@ -2405,11 +2407,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 627800344}
   m_CullTransparentMesh: 1
---- !u!1 &669690013 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2989893091750982822, guid: de558d3dca4bd554e9822057bc077817, type: 3}
-  m_PrefabInstance: {fileID: 1042309689}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &717121080
 GameObject:
   m_ObjectHideFlags: 0
@@ -2524,7 +2521,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 717121080}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6343a0ebc6403a64b81db278aa02b322, type: 3}
   m_Name: 
@@ -5145,7 +5142,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1475252600}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6343a0ebc6403a64b81db278aa02b322, type: 3}
   m_Name: 
@@ -12760,8 +12757,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32d1b76b356617c4ba086f998f446166, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchDelay: 0.5
-  decalPrefab: {fileID: 669690013}
+  touchDelay: 0
+  minSpawnDistance: 0.5
+  decalPrefab: {fileID: 2989893091750982822, guid: de558d3dca4bd554e9822057bc077817, type: 3}
 --- !u!114 &1762569088
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12786,6 +12784,7 @@ MonoBehaviour:
   sphereRadius: 0.2
   maxDetectionAngle: 45
   minTouchDistance: 0.1
+  visualContactPoint: {fileID: 717121081}
   handOffset: {x: 0, y: 0, z: 0.05}
   moveSpeed: 1
   retractSmoothTime: 0.3
@@ -13766,7 +13765,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2002776776
 Transform:
   m_ObjectHideFlags: 0
@@ -14571,7 +14570,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2114283753834967213
 Transform:
   m_ObjectHideFlags: 0
