@@ -7,6 +7,12 @@ TagManager:
   - CinemachineTarget
   - Interactable
   - Wall
+  - Wood
+  - Concrete
+  - Dirt
+  - Grass
+  - Mud
+  - Rock
   layers:
   - Default
   - TransparentFX
