@@ -84,7 +84,7 @@ public class PlayerTouchWireframe : MonoBehaviour
         if (other.Raycast(ray, out hit, direction.magnitude)) 
         {
             decalPos = hit.point;
-            /*Debug.Log("触碰点坐标: " + decalPos);*/
+            /*Debug.Log("触碰点坐标: " + decalPos); * /
         }
     }
 
