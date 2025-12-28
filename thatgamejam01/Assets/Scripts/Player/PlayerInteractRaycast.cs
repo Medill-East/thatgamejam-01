@@ -53,13 +53,13 @@ public class PlayerInteractRaycast : MonoBehaviour
                 // B. 检测输入 (这里读取的是 StarterAssetsInputs 里的 interact 变量)
                 if (_input.interact)
                 {
-                    // 获取物体上的 BedInteract 脚本
-                    BedInteract bed = hit.collider.GetComponent<BedInteract>();
+                    // 获取物体上的 IInteractable 接口 (支持在父物体上)
+                    IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
                     
-                    if (bed != null)
+                    if (interactable != null)
                     {
                         // 执行交互
-                        bed.OnInteract();
+                        interactable.OnInteract();
                         
                         // 【关键一步】
                         // 因为 Update 每帧运行，为了防止按一次键触发几十次交互，
