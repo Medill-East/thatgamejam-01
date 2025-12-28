@@ -15255,6 +15255,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9005220659476430818, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
   m_PrefabInstance: {fileID: 60889539378096550}
   m_PrefabAsset: {fileID: 0}
+--- !u!20 &60889539378096561 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 9005220659476430821, guid: 2d3a85ecde41a8246a79669975912b74, type: 3}
+  m_PrefabInstance: {fileID: 60889539378096550}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1915557027123786289
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15408,6 +15413,7 @@ GameObject:
   - component: {fileID: 2114283754330233426}
   - component: {fileID: 2114283754330233425}
   - component: {fileID: 2114283754330233427}
+  - component: {fileID: 2114283754330233428}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -15515,6 +15521,24 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!114 &2114283754330233428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114283754330233424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82d71d8237e0f8c4c958d7feea6ca454, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sunLight: {fileID: 2114283754330233425}
+  daySkybox: {fileID: 2100000, guid: aeab33f69c199e54794f516d31450ec4, type: 2}
+  mainCamera: {fileID: 60889539378096561}
+  isDark: 0
+  darkFogDensity: 0.9
+  darkFogColor: {r: 0, g: 0, b: 0, a: 1}
 --- !u!1001 &5393215579111688471
 PrefabInstance:
   m_ObjectHideFlags: 0
