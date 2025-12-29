@@ -8919,7 +8919,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 7
-  MaxDistance: 18
+  MaxDistance: 25
   Pan2D: 0
   rolloffMode: 1
   BypassEffects: 0
@@ -14523,6 +14523,10 @@ PrefabInstance:
     - target: {fileID: 3627417885661108196, guid: 727a548e15742114ea678e2e342859b1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5824221533972964965, guid: 727a548e15742114ea678e2e342859b1, type: 3}
+      propertyPath: MaxDistance
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7490999614872087898, guid: 727a548e15742114ea678e2e342859b1, type: 3}
       propertyPath: m_Name
