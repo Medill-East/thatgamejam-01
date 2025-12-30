@@ -171,13 +171,13 @@ public class WallTouchSystem : MonoBehaviour
                     Vector3 projectedPoint = wallPlane.ClosestPointOnPlane(refPoint);
 
                     if (wireframeScript != null) 
-                        wireframeScript.UpdateTouchState(GetInstanceID(), true, projectedPoint, hit.normal);
+                        wireframeScript.UpdateTouchState(GetInstanceID(), true, projectedPoint, hit.normal, hit.collider);
                 }
                 else
                 {
                     // 手还在飞行中，不需要生成
                    if (wireframeScript != null) 
-                        wireframeScript.UpdateTouchState(GetInstanceID(), false, Vector3.zero, Vector3.zero);
+                        wireframeScript.UpdateTouchState(GetInstanceID(), false, Vector3.zero, Vector3.zero, hit.collider);
                 }
                 
                 return; 
@@ -198,7 +198,7 @@ public class WallTouchSystem : MonoBehaviour
             _isTouching = false;
             // 注意：如果两只手公用一个 Wireframe 脚本，一只手松开可能会打断另一只手
             // 建议给每只手配一个单独的 PlayerTouchWireframe2，或者忽略这个Bug
-            if (wireframeScript != null) wireframeScript.UpdateTouchState(GetInstanceID(), false, Vector3.zero, Vector3.zero);
+            if (wireframeScript != null) wireframeScript.UpdateTouchState(GetInstanceID(), false, Vector3.zero, Vector3.zero, null);
         }
     }
 
