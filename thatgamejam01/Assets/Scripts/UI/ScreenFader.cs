@@ -20,6 +20,9 @@ public class ScreenFader : MonoBehaviour
 
     public IEnumerator FadeIn()
     {
+        if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
+        if (_canvasGroup == null) _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
         float timer = 0f;
         while (timer < fadeDuration)
         {
@@ -40,5 +43,13 @@ public class ScreenFader : MonoBehaviour
             yield return null;
         }
         _canvasGroup.alpha = 0f;
+    }
+
+    public void SetAlpha(float alpha)
+    {
+        if (_canvasGroup == null) _canvasGroup = GetComponent<CanvasGroup>();
+        if (_canvasGroup == null) _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+        
+        _canvasGroup.alpha = alpha;
     }
 }
