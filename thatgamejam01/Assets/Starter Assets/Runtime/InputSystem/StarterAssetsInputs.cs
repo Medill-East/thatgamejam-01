@@ -17,6 +17,7 @@ namespace StarterAssets
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
+        public bool movementEnabled = true; // Added for Rescue Mechanic
 
 		[Header("Mouse Cursor Settings")]
 		public bool cursorLocked = true;
@@ -62,7 +63,10 @@ namespace StarterAssets
 
 		public void MoveInput(Vector2 newMoveDirection)
 		{
-			move = newMoveDirection;
+            if (movementEnabled)
+			    move = newMoveDirection;
+            else
+                move = Vector2.zero;
 		} 
 
 		public void LookInput(Vector2 newLookDirection)
@@ -72,12 +76,18 @@ namespace StarterAssets
 
 		public void JumpInput(bool newJumpState)
 		{
-			jump = newJumpState;
+            if (movementEnabled)
+			    jump = newJumpState;
+            else 
+                jump = false;
 		}
 
 		public void SprintInput(bool newSprintState)
 		{
-			sprint = newSprintState;
+            if (movementEnabled)
+			    sprint = newSprintState;
+            else 
+                sprint = false;
 		}
 		
 		private void OnApplicationFocus(bool hasFocus)

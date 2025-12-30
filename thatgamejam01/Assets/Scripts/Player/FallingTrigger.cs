@@ -12,8 +12,27 @@ public class FallingTrigger : MonoBehaviour
     public float fallDuration = 2.0f; // Approx time until landing
 
     [Header("Rescue Setup")]
-    public GameObject rescueHandPrefab;
-    public Transform handSpawnPoint;
+    public GameObject rescueHandSceneInstance; // Drag the SCENE OBJECT here, not a prefab
+    // public Transform handSpawnPoint; // Not needed if we use the scene object's position, or we can move it.
+    // Let's assume the scene object is already placed where it should be, or we move it here?
+    // User requested "Activate" so likely it's already placed.
+
+
+    [Header("Sequence Timings")]
+    public float timeBeforeGasp = 0.5f;
+    public float timeAfterGasp = 1.0f; // Gap between gasp and splash
+    public float timeAfterSplash = 2.0f; // Waiting in darkness before hand appears
+
+    [Header("Audio")]
+    public AudioClip gaspSound;
+    public AudioClip splashSound;
+    // Note: Lullaby is on the Hand Prefab
+
+    [Header("Respawn")]
+    public Transform respawnPoint;
+
+    [Header("Hand Reference")]
+    public Transform playerRightHand; // Assign in Inspector (e.g. from WallTouchSystem or hierarchy)
 
     private bool _hasTriggered = false;
 
@@ -37,15 +56,13 @@ public class FallingTrigger : MonoBehaviour
 
         if (inputs != null)
         {
-            // Reset move input to stop walking
+            // Disable movement via our new flag
+            inputs.movementEnabled = false;
+            
+            // Reset current input values
             inputs.move = Vector2.zero;
             inputs.jump = false;
             inputs.sprint = false;
-            // Disable input processing if possible, or just overwrite in update. 
-            // For StarterAssets, we might just set cursor locked state or hack the input.
-            // Simplest way: Disable the CharacterController temporarily or modify the input script. 
-            // We'll trust disabling CharacterController stops movement physics, but input might still rotate camera.
-            // Let's assume we want to keep camera control (looking around) but stop movement.
         }
 
         // Disable CC to stop physics movement calculation issues if we want to freeze them later, 
@@ -53,43 +70,112 @@ public class FallingTrigger : MonoBehaviour
         // If we want to disable WASD, we might need a flag in Player Logic.
         // For now, we rely on the player falling physically.
         
-        // 2. Play Fall Sound
-        if (fallSound != null)
-        {
-            AudioSource.PlayClipAtPoint(fallSound, player.transform.position); // Simple play
-        }
-
-        // 3. Gamepad Haptics
-        if (Gamepad.current != null)
-        {
-            Gamepad.current.SetMotorSpeeds(vibrationIntensity, vibrationIntensity);
-        }
-
-        // Wait for landing (approximate or detect ground)
-        yield return new WaitForSeconds(fallDuration);
-
-        // 4. Landing / Groan
-        if (Gamepad.current != null)
-        {
-            Gamepad.current.SetMotorSpeeds(0f, 0f); // Stop vibration
-        }
-
-        if (groanSound != null)
-        {
-            AudioSource.PlayClipAtPoint(groanSound, player.transform.position);
-        }
-
-        // 5. Spawn Rescue Hand
-        if (rescueHandPrefab != null && handSpawnPoint != null)
-        {
-            // GameObject hand = Instantiate(rescueHandPrefab, handSpawnPoint.position, handSpawnPoint.rotation);
-            // Pass necessary data to hand if needed
-            rescueHandPrefab.SetActive(true);
-        }
-
-        Debug.Log("Player has fallen. Rescue Hand spawned.");
+        // 2. Sequence
         
-        // Reset trigger state so it can happen again if the player falls again later
+        // Initial Fall delay (maybe air wind?)
+        yield return new WaitForSeconds(timeBeforeGasp);
+
+        // Gasp
+        if (gaspSound != null) AudioSource.PlayClipAtPoint(gaspSound, player.transform.position);
+        
+        yield return new WaitForSeconds(timeAfterGasp);
+
+        // Splash (landing?)
+        if (splashSound != null) AudioSource.PlayClipAtPoint(splashSound, player.transform.position);
+
+        // Stop Vibration
+        if (Gamepad.current != null) Gamepad.current.SetMotorSpeeds(0f, 0f);
+
+        yield return new WaitForSeconds(timeAfterSplash);
+
+        // 0. Try Auto-Find Hand if missing
+        if (playerRightHand == null)
+        {
+            // A. Try finding by WallTouchSystem Component (Most Robust)
+            var wallTouchSystems = player.GetComponentsInChildren<WallTouchSystem>();
+            foreach (var wts in wallTouchSystems)
+            {
+                if (wts.currentHand == WallTouchSystem.HandSide.Right)
+                {
+                    playerRightHand = wts.handContainer;
+                    Debug.Log("[FallingTrigger] Auto-found Right Hand via WallTouchSystem.");
+                    break;
+                }
+            }
+
+            // B. Try finding by Tag (User Request)
+            if (playerRightHand == null)
+            {
+                var taggedObj = GameObject.FindGameObjectWithTag("RightHand"); // Tag must be added!
+                if (taggedObj != null) 
+                {
+                    playerRightHand = taggedObj.transform;
+                    Debug.Log("[FallingTrigger] Auto-found Right Hand via Tag 'RightHand'.");
+                }
+            }
+
+            // C. Try finding by Path (User specific structure)
+            if (playerRightHand == null)
+            {
+                // Path: PlayerRelated-MainCamera-RightHandLogic-RightHandContainer
+                // Assuming 'player' is 'PlayerRelated' (Root) or close to it.
+                // Let's try searching specifically for "MainCamera/RightHandLogic/RightHandContainer"
+                Transform t = player.transform.Find("MainCamera/RightHandLogic/RightHandContainer");
+                if (t == null) t = player.transform.Find("RightHandContainer"); // Fallback check
+                
+                if (t != null)
+                {
+                    playerRightHand = t;
+                    Debug.Log("[FallingTrigger] Auto-found Right Hand via Hierarchy Path.");
+                }
+            }
+        }
+
+        // 3. Activate Hand
+        if (rescueHandSceneInstance != null)
+        {
+            // Update position if needed? User didn't ask, but let's assume it's fixed in scene.
+            // If we still want to move it to a spawn point, we can.
+            // But user said: "Simply SetActive is enough?". Let's trust that.
+            
+            // Pass Data BEFORE activating to ensure Start/OnEnable has data?
+            // Actually, GetComponent works on inactive objects if we specify includeInactive=true, 
+            // OR strictly speaking we just get it from the field.
+            
+            var handScript = rescueHandSceneInstance.GetComponent<RescueHandGaze>();
+            if (handScript != null)
+            {
+                handScript.playerRef = player;
+                handScript.playerHandRef = playerRightHand; // Pass the hand ref
+                Debug.Log($"[FallingTrigger] Assigned PlayerRef to hand: {player.name}");
+                
+                if (respawnPoint != null)
+                {
+                    handScript.respawnPointRef = respawnPoint;
+                }
+                else
+                {
+                    var dz = FindObjectOfType<DeadZone>();
+                    if (dz != null) handScript.respawnPointRef = dz.respawnPoint;
+                }
+            }
+            else
+            {
+                Debug.LogError("[FallingTrigger] Assigned Scene Object does NOT have RescueHandGaze component!");
+            }
+            
+            rescueHandSceneInstance.SetActive(true);
+            Debug.Log("Player has fallen. Rescue Hand Activated.");
+        }
+        else
+        {
+             Debug.LogError("[FallingTrigger] rescueHandSceneInstance is NOT assigned!");
+        }
+
+        // Removed: _hasTriggered = false; // We probably don't want to trigger this multiple times per fall?
+        // Actually, if we reset, we might need to reset the Hand too.
+        // For now, keep the trigger logic as is (it sets _hasTriggered=true at start).
+        // If we want it repeatable, we need to ensure the Hand resets itself on Disable/Enable.
         _hasTriggered = false;
     }
 
