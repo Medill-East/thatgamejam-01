@@ -186,7 +186,19 @@ public class RescueHandGaze : MonoBehaviour
 
         if (lullabySource != null)
         {
-            lullabySource.volume = Mathf.Lerp(minVolume, maxVolume, progress01);
+            float targetVol = Mathf.Lerp(minVolume, maxVolume, progress01);
+            
+            // Try to set via SmartAudioSource first
+            var smartAudio = lullabySource.GetComponent<SmartAudioSource>();
+            if (smartAudio != null)
+            {
+                smartAudio.externalVolumeMult = targetVol;
+                // SmartAudioSource will calculate final volume based on this * orientation
+            }
+            else
+            {
+                lullabySource.volume = targetVol;
+            }
         }
         
         if (_faderInstance != null)
