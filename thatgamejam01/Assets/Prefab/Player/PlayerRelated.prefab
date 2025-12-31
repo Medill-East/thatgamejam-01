@@ -2104,7 +2104,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 7513924856936497514}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7174909127764704886}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eaed785d4b6a11343a63aad60a26bdb8, type: 3}
   m_Name: 
@@ -2648,7 +2648,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000013477813392, guid: 057574477c20401448aba7c848873712, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.38
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000013477813392, guid: 057574477c20401448aba7c848873712, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2704,6 +2704,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: vr_glove_right
       objectReference: {fileID: 0}
+    - target: {fileID: 1000010184414672, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
+      propertyPath: m_TagString
+      value: RightHand
+      objectReference: {fileID: 0}
     - target: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_LocalScale.x
       value: 2
@@ -2726,7 +2730,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.38
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2742,7 +2746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.38268343
+      value: 0.38268343
       objectReference: {fileID: 0}
     - target: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2754,7 +2758,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4000011683143748, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -45
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 137000011787564676, guid: 5dc81ef5cae96304586abbc6e4b5beb8, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2886,6 +2890,10 @@ PrefabInstance:
     - target: {fileID: 1809005528100308074, guid: 75844979d0251cd4abcc5b93b8d9458c, type: 3}
       propertyPath: m_Name
       value: MainCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 6371420556509044938, guid: 75844979d0251cd4abcc5b93b8d9458c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6371420556509044938, guid: 75844979d0251cd4abcc5b93b8d9458c, type: 3}
       propertyPath: interactText

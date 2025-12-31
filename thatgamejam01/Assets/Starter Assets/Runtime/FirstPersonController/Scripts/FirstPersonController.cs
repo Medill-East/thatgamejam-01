@@ -253,6 +253,69 @@ namespace StarterAssets
 			return Mathf.Clamp(lfAngle, lfMin, lfMax);
 		}
 
+		// 【新增】强制看向某个目标点 (不锁定，仅一次性调整)
+		public void ForceLookAt(Vector3 targetPos)
+		{
+			Vector3 direction = (targetPos - transform.position).normalized;
+			
+			// 1. 设置水平旋转 (Yaw) - 调整 Player transform
+			// 投影到水平面
+			Vector3 flatDir = new Vector3(direction.x, 0f, direction.z).normalized;
+			if (flatDir != Vector3.zero)
+			{
+				transform.rotation = Quaternion.LookRotation(flatDir);
+			}
+
+			// 2. 设置垂直旋转 (Pitch) - 调整 Cinemachine Target
+			// 计算俯仰角 (-90 到 90)
+			float angle = Vector3.Angle(flatDir, direction);
+			// 判断是向上还是向下
+			if (direction.y < 0) angle = -angle;
+			
+			_cinemachineTargetPitch = ClampAngle(angle, BottomClamp, TopClamp);
+			CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+			
+			// 重置鼠标输入速度，避免甩鼠标带来的惯性
+			_rotationVelocity = 0f;
+		}
+
+		// 【新增】强制设置位置和旋转 (用于传送玩家到特定视角)
+		public void ForceSetPositionAndRotation(Transform targetTransform)
+		{
+			// 1. 临时禁用 CharacterController 以允许直接修改 Transform
+			if (_controller != null) _controller.enabled = false;
+
+			// 2. 设置位置
+			transform.position = targetTransform.position;
+
+			// 3. 设置水平旋转 (Yaw, Player Body)
+			// 注意：FirstPersonController 通常只旋转 Y 轴
+			Vector3 targetForward = targetTransform.forward;
+			Vector3 flatForward = new Vector3(targetForward.x, 0f, targetForward.z).normalized;
+			if (flatForward != Vector3.zero)
+			{
+				transform.rotation = Quaternion.LookRotation(flatForward);
+			}
+
+			// 4. 设置垂直旋转 (Pitch, Camera Target)
+			// 从 targetTransform 的 X 轴旋转获取 Pitch
+			// 在 Unity 中，向下看是正 Pitch 还是负 Pitch 取决于实现，这里我们直接解算 Forward 的 Pitch
+			float pitch = targetTransform.localEulerAngles.x;
+			
+			// 欧拉角 0-360 转 -180-180
+			if (pitch > 180) pitch -= 360;
+			
+			_cinemachineTargetPitch = ClampAngle(pitch, BottomClamp, TopClamp);
+			CinemachineCameraTarget.transform.localRotation = Quaternion.Euler(_cinemachineTargetPitch, 0.0f, 0.0f);
+
+			// 5. 重置速度
+			_rotationVelocity = 0f;
+			_verticalVelocity = 0f;
+
+			// 6. 恢复 CharacterController
+			if (_controller != null) _controller.enabled = true;
+		}
+
 		private void OnDrawGizmosSelected()
 		{
 			Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);

@@ -20,11 +20,16 @@ public class RescueHandGaze : MonoBehaviour
     public float maxLightIntensity = 5.0f;
     public float minVolume = 0.1f;
     public float maxVolume = 1.0f;
+    public float maxHandExtension = 0.8f; // 【新增】手臂最大伸出距离 (米)
+    public Vector3 reachingRotationOffset = Vector3.zero; // 【新增】伸出手时的旋转修正
 
     // Runtime Data injected by FallingTrigger
     [HideInInspector] public GameObject playerRef;
     [HideInInspector] public Transform respawnPointRef;
     [HideInInspector] public Transform playerHandRef; // The player's right hand
+    [HideInInspector] public WallTouchSystem wtsRef; // 【新增】
+
+    [HideInInspector] public GameObject fakeHandPrefab; // 【新增】假手预制体
 
     private float _timeSinceSpawn = 0f;
     private bool _isRescued = false;
@@ -38,8 +43,12 @@ public class RescueHandGaze : MonoBehaviour
     private Vector3 _initialPlayerHandLocalPos;
     private Quaternion _initialPlayerHandLocalRot;
     
+    // Fake Hand State
+    private GameObject _realHandObject;
+    private GameObject _spawnedFakeHand;
+    
     // Distance Params
-    public float handReachDistance = 0.5f; 
+
     public float maxDistance = 3.0f; // Distance where effects are 0
     public float successDistance = 0.2f; // Touch threshold
     
@@ -50,6 +59,20 @@ public class RescueHandGaze : MonoBehaviour
     private void OnEnable()
     {
         Debug.Log($"[RescueHandGaze] OnEnable. PlayerRef is assigned: {(playerRef != null)}");
+
+        // Disable WallTouchSystem to prevent conflict
+        if (wtsRef != null) wtsRef.enabled = false;
+        
+        // 【新增】确保视觉部分被重新启用 (因为我们在 SuccessSequence 里关闭了它)
+        if (handVisualRoot != null)
+        {
+            handVisualRoot.gameObject.SetActive(true);
+            // 额外修复：如果之前是通过禁用 component 隐藏的，现在要恢复
+            foreach(var r in handVisualRoot.GetComponentsInChildren<Renderer>(true)) 
+            {
+                r.enabled = true;
+            }
+        }
 
         // Reset State on Enable
 
@@ -77,6 +100,29 @@ public class RescueHandGaze : MonoBehaviour
 
         if (playerHandRef != null)
         {
+            // --- Fake Hand Logic ---
+            if (fakeHandPrefab != null)
+            {
+                // 1. 记录真手
+                _realHandObject = playerHandRef.gameObject;
+                
+                // 2. 生成假手 (作为真手的兄弟节点，或者父节点的子节点)
+                _spawnedFakeHand = Instantiate(fakeHandPrefab, playerHandRef.parent);
+                
+                // 3. 对齐位置旋转
+                _spawnedFakeHand.transform.localPosition = playerHandRef.localPosition;
+                _spawnedFakeHand.transform.localRotation = playerHandRef.localRotation;
+                _spawnedFakeHand.transform.localScale = playerHandRef.localScale;
+                
+                // 4. 隐藏真手
+                _realHandObject.SetActive(false);
+                
+                // 5. 将 logic reference 指向假手，这样后续动画代码就会驱动假手
+                playerHandRef = _spawnedFakeHand.transform;
+                
+                Debug.Log("[RescueHandGaze] Swapped to Fake Hand.");
+            }
+            
             _initialPlayerHandLocalPos = playerHandRef.localPosition;
             _initialPlayerHandLocalRot = playerHandRef.localRotation;
         }
@@ -91,6 +137,27 @@ public class RescueHandGaze : MonoBehaviour
         if (_faderInstance != null)
         {
             _faderInstance.SetAlpha(0f); // Start invisible
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Restore WallTouchSystem
+        if (wtsRef != null) wtsRef.enabled = true;
+        
+        // Restore Real Hand
+        if (_realHandObject != null)
+        {
+            _realHandObject.SetActive(true);
+            playerHandRef = _realHandObject.transform; // Reset ref back to real hand just in case
+            _realHandObject = null;
+        }
+        
+        // Destroy Fake Hand
+        if (_spawnedFakeHand != null)
+        {
+            Destroy(_spawnedFakeHand);
+            _spawnedFakeHand = null;
         }
     }
 
@@ -151,10 +218,31 @@ public class RescueHandGaze : MonoBehaviour
              Vector3 dirToCam = (mainCam.transform.position - transform.position).normalized;
              transform.position += dirToCam * handMoveSpeed * Time.deltaTime;
              
-             // Move Player Hand towards Rescue Hand
+             // Move Player Hand towards Rescue Hand (World Space Direction)
              if (playerHandRef != null)
              {
-                 playerHandRef.localPosition += Vector3.forward * (handMoveSpeed * 2.0f) * Time.deltaTime; 
+                 // 1. 旋转手掌朝向目标
+                 Vector3 directionToTarget = (handVisualRoot.position - playerHandRef.position).normalized;
+                 if (directionToTarget != Vector3.zero)
+                 {
+                     Quaternion baseLookRot = Quaternion.LookRotation(directionToTarget, Vector3.up);
+                     // 【新增】应用旋转偏移，让玩家可以调整“手心朝向”或“手腕抬起”的感觉
+                     Quaternion finalRot = baseLookRot * Quaternion.Euler(reachingRotationOffset);
+                     
+                     // 混合旋转
+                     playerHandRef.rotation = Quaternion.Slerp(playerHandRef.rotation, finalRot, Time.deltaTime * 5f);
+                 }
+
+                 // 2. 向目标移动
+                 playerHandRef.position += directionToTarget * (handMoveSpeed * 2.0f) * Time.deltaTime;
+
+                 // 3. 【修复】基于球形距离的限制，而不是单纯 Z 轴
+                 float dist = Vector3.Distance(playerHandRef.localPosition, _initialPlayerHandLocalPos);
+                 if (dist > maxHandExtension)
+                 {
+                     Vector3 dirFromStart = (playerHandRef.localPosition - _initialPlayerHandLocalPos).normalized;
+                     playerHandRef.localPosition = _initialPlayerHandLocalPos + dirFromStart * maxHandExtension;
+                 }
              }
         }
         else
@@ -244,6 +332,23 @@ public class RescueHandGaze : MonoBehaviour
         // 1. Maximize effects
         if (handLight != null) handLight.intensity = maxLightIntensity;
         if (_faderInstance != null) _faderInstance.SetAlpha(1f); // Ensure full white
+
+        // 【新增】在全白瞬间立即隐藏手，防止它们“残留”到传送后的画面
+        if (handVisualRoot != null)
+        {
+             // 关键修复：如果 handVisualRoot 就是挂载脚本的物体本身，SetActivate(false) 会直接杀掉这个 Coroutine，导致卡在白屏
+             if (handVisualRoot.gameObject == gameObject)
+             {
+                 // 只是禁用渲染器，不禁用物体
+                 foreach(var r in GetComponentsInChildren<Renderer>()) r.enabled = false;
+             }
+             else
+             {
+                 handVisualRoot.gameObject.SetActive(false);
+             }
+        }
+        
+        if (playerHandRef != null) playerHandRef.gameObject.SetActive(false); // Fake hand is separate, safe to disable
 
         // Wait a moment in full white
         yield return new WaitForSeconds(0.5f);

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2644700032948297983
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5916093145112720213}
+  m_Layer: 0
+  m_Name: Viewport
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5916093145112720213
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2644700032948297983}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.99993545, z: -0, w: 0.011361778}
+  m_LocalPosition: {x: -0.107, y: 0, z: 2.185}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5992398766356945511}
+  m_LocalEulerAnglesHint: {x: 0, y: 178.698, z: 0}
 --- !u!1 &5194947377100611819
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 5194947377100611819}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4.605, y: 2.663, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -182,6 +213,7 @@ Transform:
   - {fileID: 4580129484841546136}
   - {fileID: 5159994533204330142}
   - {fileID: 1707112909810428834}
+  - {fileID: 5916093145112720213}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7265745273230438012
@@ -255,6 +287,8 @@ MonoBehaviour:
   vibrationIntensity: 1
   fallDuration: 0.2
   rescueHandSceneInstance: {fileID: 7901220388541215714}
+  fakeHandPrefab: {fileID: 1000010184414672, guid: 0aee8f5445cf45644af2e51bcf147e89, type: 3}
+  optimalViewingPoint: {fileID: 5916093145112720213}
   timeBeforeGasp: 0.1
   timeAfterGasp: 0.1
   timeAfterSplash: 2
@@ -284,39 +318,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.13
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.78
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7433492
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.3222868
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.58373916
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.05302783
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: 32.755
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 82.432
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 20.711
       objectReference: {fileID: 0}
     - target: {fileID: 7532018223272214327, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_Name
@@ -392,13 +426,16 @@ MonoBehaviour:
   maxLightIntensity: 0.1
   minVolume: 0.1
   maxVolume: 1
+  maxHandExtension: 1.3
+  reachingRotationOffset: {x: -15, y: 0, z: 90}
   playerRef: {fileID: 0}
   respawnPointRef: {fileID: 0}
   playerHandRef: {fileID: 0}
-  handReachDistance: 1
+  wtsRef: {fileID: 0}
+  fakeHandPrefab: {fileID: 0}
   maxDistance: 3
-  successDistance: 0.2
-  handMoveSpeed: 0.5
+  successDistance: 0.1
+  handMoveSpeed: 0.15
   handReturnSpeed: 0.1
 --- !u!1001 &7021413028573989478
 PrefabInstance:

@@ -13,6 +13,8 @@ public class FallingTrigger : MonoBehaviour
 
     [Header("Rescue Setup")]
     public GameObject rescueHandSceneInstance; // Drag the SCENE OBJECT here, not a prefab
+    public GameObject fakeHandPrefab; // 【新增】用于展示的假手预制体
+    public Transform optimalViewingPoint; // 【新增】最佳观察点 (空物体)
     // public Transform handSpawnPoint; // Not needed if we use the scene object's position, or we can move it.
     // Let's assume the scene object is already placed where it should be, or we move it here?
     // User requested "Activate" so likely it's already placed.
@@ -34,15 +36,16 @@ public class FallingTrigger : MonoBehaviour
     [Header("Hand Reference")]
     public Transform playerRightHand; // Assign in Inspector (e.g. from WallTouchSystem or hierarchy)
 
-    private bool _hasTriggered = false;
+    private float _lastTriggerTime = -999f; // 【修改】使用时间戳代替布尔锁
 
     private void OnTriggerEnter(Collider other)
     {
-        if (_hasTriggered) return;
+        // 5秒防抖，防止短时间内重复触发，或者物理引擎的不稳定
+        if (Time.time - _lastTriggerTime < 5.0f) return;
 
         if (other.CompareTag("Player"))
         {
-            _hasTriggered = true;
+            _lastTriggerTime = Time.time;
             StartCoroutine(FallRoutine(other.gameObject));
         }
     }
@@ -134,6 +137,13 @@ public class FallingTrigger : MonoBehaviour
         // 3. Activate Hand
         if (rescueHandSceneInstance != null)
         {
+            // 【重要修复】确保先关闭再开启，以触发 OnEnable 重置逻辑
+            // 如果上次玩家走了但手还在，或者手已经是激活状态，直接 SetActive(true) 不会有任何反应
+            if (rescueHandSceneInstance.activeSelf)
+            {
+                rescueHandSceneInstance.SetActive(false);
+            }
+
             // Update position if needed? User didn't ask, but let's assume it's fixed in scene.
             // If we still want to move it to a spawn point, we can.
             // But user said: "Simply SetActive is enough?". Let's trust that.
@@ -147,6 +157,15 @@ public class FallingTrigger : MonoBehaviour
             {
                 handScript.playerRef = player;
                 handScript.playerHandRef = playerRightHand; // Pass the hand ref
+                
+                // 【新增】传递 WallTouchSystem 引用，以便在救援时禁用它
+                var wts = playerRightHand.GetComponentInParent<WallTouchSystem>(); 
+                if (wts == null) wts = playerRightHand.GetComponent<WallTouchSystem>(); // 也可以直接挂在 Hand 上
+                // 如果之前是在 FallingTrigger 里自动找到的，也可以重用那个逻辑，但这里重新获取比较安全
+                
+                handScript.wtsRef = wts; 
+                handScript.fakeHandPrefab = fakeHandPrefab; // 【新增】传递假手
+
                 Debug.Log($"[FallingTrigger] Assigned PlayerRef to hand: {player.name}");
                 
                 if (respawnPoint != null)
@@ -165,6 +184,24 @@ public class FallingTrigger : MonoBehaviour
             }
             
             rescueHandSceneInstance.SetActive(true);
+            
+            // 【新增】看向手，避免玩家一直看地板
+            var fpsController = player.GetComponent<FirstPersonController>();
+            if (fpsController != null)
+            {
+                if (optimalViewingPoint != null)
+                {
+                    // 优先使用传送：直接传送到最佳观察点
+                    fpsController.ForceSetPositionAndRotation(optimalViewingPoint);
+                    Debug.Log("[FallingTrigger] Teleported player to Optimal Viewing Point.");
+                }
+                else
+                {
+                    // 降级方案：原地扭头
+                    fpsController.ForceLookAt(rescueHandSceneInstance.transform.position);
+                }
+            }
+            
             Debug.Log("Player has fallen. Rescue Hand Activated.");
         }
         else
@@ -176,8 +213,11 @@ public class FallingTrigger : MonoBehaviour
         // Actually, if we reset, we might need to reset the Hand too.
         // For now, keep the trigger logic as is (it sets _hasTriggered=true at start).
         // If we want it repeatable, we need to ensure the Hand resets itself on Disable/Enable.
-        _hasTriggered = false;
+        // _hasTriggered = false; // 【修改】不再重置，防止玩家呆在 Trigger 里反复触发
     }
+
+    // OnTriggerExit 移除：不再依赖退出事件重置状态，改用时间戳自动恢复
+    // private void OnTriggerExit(Collider other) { ... }
 
     private void OnDisable()
     {
