@@ -128,6 +128,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3627417885661108196}
   - component: {fileID: 6356766355694954588}
+  - component: {fileID: 8328615242156632788}
+  - component: {fileID: 3895387371880032586}
   m_Layer: 0
   m_Name: PFB_windchime
   m_TagString: Untagged
@@ -167,6 +169,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extendsIslandOffset: 1
+--- !u!135 &8328615242156632788
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7490999614872087898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3895387371880032586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7490999614872087898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e926bcf0b2f85944ba17102e81024d4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chimeAudio: {fileID: 7948181339049359368}
 --- !u!1 &7695939920997732112
 GameObject:
   m_ObjectHideFlags: 0
@@ -366,7 +402,7 @@ MonoBehaviour:
   facingFreq: 22000
   backingFreq: 2500
   backingVolumeMultiplier: 0.3
-  externalVolumeMult: 1
+  externalVolumeMult: -100
 --- !u!169 &4879065881421352378
 AudioLowPassFilter:
   m_ObjectHideFlags: 0
