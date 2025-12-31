@@ -28,6 +28,7 @@ public class WallTouchSystem : MonoBehaviour
     [Tooltip("手掌接触点（例如指尖或掌心）。如果不填则默认使用 Hand Container")]
     public Transform visualContactPoint; 
     public Vector3 handOffset = new Vector3(0, 0, 0.05f); 
+    public Vector3 rotationOffset = Vector3.zero; // 【新增】手动修正模型旋转 
 
     [Header("动画参数")]
     public float moveSpeed = 5f; 
@@ -153,7 +154,9 @@ public class WallTouchSystem : MonoBehaviour
 
                 // 4. 计算最终目标 (虚拟位置 + 法线偏移)
                 _targetPos = clampedWorldPos + (hit.normal * handOffset.z);
-                _targetRot = Quaternion.LookRotation(-hit.normal, Vector3.up);
+                
+                // 【修复】增加旋转偏移，适配不同手部模型 (例如手掌朝向不同)
+                _targetRot = Quaternion.LookRotation(-hit.normal, Vector3.up) * Quaternion.Euler(rotationOffset);
 
                 // Debug.Log($"[{handName}] 摸到了！墙在 x:{localHitPoint.x:F2}");
 
