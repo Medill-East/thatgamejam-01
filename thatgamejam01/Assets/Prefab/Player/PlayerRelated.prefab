@@ -1239,6 +1239,7 @@ MonoBehaviour:
   RotationSpeed: 1
   SpeedChangeRate: 10
   JumpHeight: 1.2
+  CanJump: 0
   Gravity: -15
   JumpTimeout: 0.1
   FallTimeout: 0.15
@@ -2547,6 +2548,10 @@ PrefabInstance:
     - target: {fileID: 6166000341407897217, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: m_Name
       value: PlayerCapsule
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
+      propertyPath: CanJump
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
