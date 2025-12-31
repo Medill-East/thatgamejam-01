@@ -6,6 +6,8 @@ public class WindChime : MonoBehaviour, IInteractable
 {
     private bool _isInteracting = false;
     public Material ignoreFogMaterial;
+
+    private bool _hasTriggered = false;
     
     
     // Start is called before the first frame update
@@ -22,6 +24,8 @@ public class WindChime : MonoBehaviour, IInteractable
     
     public void OnInteract()
     {
+        if (!_hasTriggered) return;
+        
         Debug.Log("player touch wind chime");
 
         //交互后风铃一直显示
@@ -29,6 +33,10 @@ public class WindChime : MonoBehaviour, IInteractable
         
         //关闭当前smart audio
         gameObject.GetComponent<SmartAudioSource>().enabled = false;
+
+        //风铃只能交互一次
+        _hasTriggered = true;
+        
         if (_isInteracting) return;
         _isInteracting = true;
     }
