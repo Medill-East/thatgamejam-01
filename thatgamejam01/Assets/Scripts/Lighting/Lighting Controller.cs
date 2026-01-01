@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using TMPro; // 如果使用普通 Text，请删除此行并把 TextMeshProUGUI 改为 Text
+using TMPro; // 如果使用普通 Text，请删除此行并将 TextMeshProUGUI 改为 Text
 
 public class LightingSwitcher : MonoBehaviour
 {
-    [Header("Settings")]
+    [Header("Toggle Features")]
+    [Tooltip("如果勾选，按下 F 切换时会传送到起点；如果不勾选，则原地切换。")]
+    public bool teleportOnSwitch = true;
+
+    [Header("Core Settings")]
     public Light sunLight;
     public Material daySkybox;
     public Camera mainCamera;
@@ -18,7 +22,7 @@ public class LightingSwitcher : MonoBehaviour
 
     [Header("Fade Visuals")]
     public CanvasGroup fadeCanvasGroup;
-    public TextMeshProUGUI yearHintText; // 拖入屏幕中间的年份文字组件
+    public TextMeshProUGUI yearHintText;
     public float fadeInTime = 0.2f;
     public float fadeOutTime = 0.4f;
 
@@ -33,6 +37,8 @@ public class LightingSwitcher : MonoBehaviour
     void Start()
     {
         if (mainCamera == null) mainCamera = Camera.main;
+
+        // 记录游戏启动时玩家的位置
         if (playerTransform != null)
         {
             startPosition = playerTransform.position;
@@ -40,8 +46,6 @@ public class LightingSwitcher : MonoBehaviour
         }
 
         if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f;
-
-        // 初始时隐藏年份文字
         if (yearHintText != null) SetYearTextAlpha(0);
 
         ApplyLighting();
@@ -49,6 +53,7 @@ public class LightingSwitcher : MonoBehaviour
 
     void Update()
     {
+        // 同时支持键盘 F 和手柄 LB
         if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.JoystickButton4))
         {
             StopAllCoroutines();
@@ -58,9 +63,9 @@ public class LightingSwitcher : MonoBehaviour
 
     IEnumerator PerformWorldSwitch()
     {
-        // 1. 屏幕逐渐变黑，同时显示年份文字
+        // 1. 变黑并显示年份
         if (yearHintText != null)
-            yearHintText.text = isDark ? pastText : presentText; // 注意：由于后面执行 isDark=!isDark，这里提前判断目标状态
+            yearHintText.text = isDark ? pastText : presentText;
 
         float elapsed = 0;
         while (elapsed < fadeInTime)
@@ -68,19 +73,24 @@ public class LightingSwitcher : MonoBehaviour
             elapsed += Time.deltaTime;
             float alpha = Mathf.Clamp01(elapsed / fadeInTime);
             if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = alpha;
-            if (yearHintText != null) SetYearTextAlpha(alpha); // 文字随黑场一起出现
+            if (yearHintText != null) SetYearTextAlpha(alpha);
             yield return null;
         }
 
-        // 2. 黑屏状态下：切换逻辑
+        // 2. 状态切换
         isDark = !isDark;
-        TeleportPlayer();
+
+        // --- 核心逻辑修改：检查 Checkbox 是否勾选 ---
+        if (teleportOnSwitch)
+        {
+            TeleportPlayer();
+        }
+
         ApplyLighting();
 
-        // 在最黑的时候停留一下，让玩家看清年份
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
 
-        // 3. 屏幕恢复透明，年份文字消失
+        // 3. 恢复透明
         elapsed = 0;
         while (elapsed < fadeOutTime)
         {
@@ -92,9 +102,9 @@ public class LightingSwitcher : MonoBehaviour
         }
     }
 
-    // 辅助方法：设置文字透明度
     void SetYearTextAlpha(float alpha)
     {
+        if (yearHintText == null) return;
         Color c = yearHintText.color;
         c.a = alpha;
         yearHintText.color = c;
@@ -104,9 +114,11 @@ public class LightingSwitcher : MonoBehaviour
     {
         if (playerTransform == null) return;
         CharacterController cc = playerTransform.GetComponent<CharacterController>();
-        if (cc != null) cc.enabled = false;
+        if (cc != null) cc.enabled = false; // 禁用控制器防止传送失败
+
         playerTransform.position = startPosition;
         playerTransform.rotation = startRotation;
+
         if (cc != null) cc.enabled = true;
     }
 
