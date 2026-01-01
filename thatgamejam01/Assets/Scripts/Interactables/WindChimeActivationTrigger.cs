@@ -6,7 +6,7 @@ using UnityEngine;
 public class WindChimeActivationTrigger : MonoBehaviour
 {
     private LightingSwitcher _lightSwitcher;
-    [SerializeField] private SmartAudioSource chimeAudio;
+    public SmartAudioSource chimeAudio;
     
     void Start()
     {

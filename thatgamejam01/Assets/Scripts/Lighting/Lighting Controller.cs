@@ -29,6 +29,8 @@ public class LightingSwitcher : MonoBehaviour
     [Header("Environment Fog")]
     public float darkFogDensity = 0.5f;
     public Color darkFogColor = Color.black;
+    
+    private WindChime[] windChimes;
 
     void Start()
     {
@@ -45,6 +47,8 @@ public class LightingSwitcher : MonoBehaviour
         if (yearHintText != null) SetYearTextAlpha(0);
 
         ApplyLighting();
+        
+        windChimes = FindObjectsOfType<WindChime>();
     }
 
     void Update()
@@ -76,6 +80,11 @@ public class LightingSwitcher : MonoBehaviour
         isDark = !isDark;
         TeleportPlayer();
         ApplyLighting();
+
+        foreach (var chime in windChimes)
+        {
+            chime.ResetWindChime();
+        }
 
         // 在最黑的时候停留一下，让玩家看清年份
         yield return new WaitForSeconds(1f);

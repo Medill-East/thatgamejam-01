@@ -16,6 +16,10 @@ public class PlayerInteractRaycast : MonoBehaviour
     private Camera _cam;
     private StarterAssetsInputs _input; // 引用 StarterAssets 的输入脚本
 
+    private int finalMask;
+    
+    private LightingSwitcher _lightSwitcher;
+
     void Start()
     {
         /// 1. 获取摄像机
@@ -30,6 +34,11 @@ public class PlayerInteractRaycast : MonoBehaviour
         {
             Debug.LogError("还是找不到！请确认你的 PlayerCapsule 物体上挂了 StarterAssetsInputs 脚本，且物体是激活的。");
         }
+        
+        // 射线检测只检测特定的层，避开玩家层
+        finalMask = ~LayerMask.GetMask("Player", "UI", "IgnoreRaycast");
+        
+        _lightSwitcher = GameObject.Find("Directional Light").GetComponent<LightingSwitcher>();
     }
 
     void Update()
@@ -42,11 +51,22 @@ public class PlayerInteractRaycast : MonoBehaviour
         RaycastHit hit;
 
         // 发射射线
-        if (Physics.Raycast(ray, out hit, interactDistance))
+        if (Physics.Raycast(ray, out hit, interactDistance,finalMask))
         {
+            //Debug.Log(hit.transform.gameObject.name);
             // 检查是不是看向了"Interactable"标签的物体
             if (hit.collider.CompareTag("Interactable"))
             {
+                //如果交互对象是风铃
+                if (hit.collider.gameObject.GetComponent<WindChime>() != null)
+                {
+                    //当风铃已经被交互过 或者 当前不是黑天 均无法交互
+                    if (hit.collider.gameObject.GetComponent<WindChime>()._hasTriggered || !_lightSwitcher.isDark)
+                    {
+                        return;
+                    }
+                }
+                
                 // A. 显示提示文字
                 if (interactText != null) interactText.SetActive(true);
 
