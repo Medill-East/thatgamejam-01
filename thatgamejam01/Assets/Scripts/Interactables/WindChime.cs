@@ -15,7 +15,8 @@ public class WindChime : MonoBehaviour
     public AnimationCurve lightIntensityCurve = AnimationCurve.Linear(0, 0, 1, 1);
     
     [Header("References")]
-    public Transform interactionPoint; // Center point for distance check (default to transform)
+    public Transform interactionPoint; // Fallback center point for distance check
+    public Collider[] interactionColliders; // Colliders to check proximity against
     public WallTouchSystem wallTouchSystem; // Reference to player's hand system
 
     [Header("Legacy / Existing")]
@@ -37,7 +38,6 @@ public class WindChime : MonoBehaviour
         defaultMaterial = GetComponent<MeshRenderer>().material;
         
         // Safety check for parent hierarchy structure logic from original code
-        // Original: smarAudioSource = gameObject.transform.parent.GetChild(0).gameObject.GetComponent<SmartAudioSource>();
         if (transform.parent != null && transform.parent.childCount > 0)
         {
             var audioObj = transform.parent.GetChild(0).gameObject;
@@ -49,6 +49,12 @@ public class WindChime : MonoBehaviour
         }
 
         if (interactionPoint == null) interactionPoint = transform;
+
+        // Auto-find colliders if not assigned
+        if (interactionColliders == null || interactionColliders.Length == 0)
+        {
+            interactionColliders = GetComponentsInChildren<Collider>();
+        }
 
         // Auto-find WallTouchSystem if not assigned
         if (wallTouchSystem == null)
@@ -105,8 +111,29 @@ public class WindChime : MonoBehaviour
     {
         if (wallTouchSystem == null || wallTouchSystem.handModel == null) return false;
 
-        float dist = Vector3.Distance(wallTouchSystem.handModel.position, interactionPoint.position);
-        return dist <= touchDistance;
+        Vector3 handPos = wallTouchSystem.handModel.position;
+
+        // Method 1: Check Colliders (Closest Point)
+        if (interactionColliders != null && interactionColliders.Length > 0)
+        {
+            foreach (var col in interactionColliders)
+            {
+                if (col == null) continue;
+                // ClosestPoint returns a point on the collider surface (or inside) closest to handPos
+                Vector3 closestPoint = col.ClosestPoint(handPos);
+                float dist = Vector3.Distance(handPos, closestPoint);
+                if (dist <= touchDistance) return true;
+            }
+        }
+        
+        // Method 2: Fallback to single point (only if no colliders found/active)
+        if (interactionPoint != null)
+        {
+             float dist = Vector3.Distance(handPos, interactionPoint.position);
+             return dist <= touchDistance;
+        }
+
+        return false;
     }
 
     void UpdateVisuals()
