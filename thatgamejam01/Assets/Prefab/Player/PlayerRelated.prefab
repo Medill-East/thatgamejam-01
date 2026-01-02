@@ -1234,7 +1234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 1.5
+  MoveSpeed: 3
   SprintSpeed: 3
   RotationSpeed: 1
   SpeedChangeRate: 10
@@ -2555,7 +2555,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: MoveSpeed
-      value: 1.5
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: SprintSpeed
