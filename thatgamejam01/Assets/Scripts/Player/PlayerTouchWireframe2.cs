@@ -58,10 +58,12 @@ public class PlayerTouchWireframe2 : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("logging");
         // 遍历所有输入源
         foreach (var kvp in _sources)
         {
             TouchSource source = kvp.Value;
+            Debug.Log(source.isTouching);
 
             if (source.isTouching)
             {
@@ -75,7 +77,7 @@ public class PlayerTouchWireframe2 : MonoBehaviour
                 //     source.lastSpawnPoint = source.point; // 更新生成点
                 //     source.timer = 0f; 
                 // }
-                
+                             
                 TouchTrace(source.point, source.collider);
             }
             else

@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6028850299593316480}
-  - component: {fileID: 2079480781471172451}
   m_Layer: 0
   m_Name: PFB_wall_S
   m_TagString: Untagged
@@ -34,27 +33,6 @@ Transform:
   - {fileID: 9110445936506505204}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &2079480781471172451
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4993283777995917248}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 4.403295, y: 2.2517848, z: 0.34631732}
-  m_Center: {x: -0.0068267984, y: -0.032013975, z: -0.038247015}
 --- !u!1001 &3914470539784625802
 PrefabInstance:
   m_ObjectHideFlags: 0

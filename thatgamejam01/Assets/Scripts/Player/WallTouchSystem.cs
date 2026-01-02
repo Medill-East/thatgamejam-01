@@ -7,6 +7,10 @@ public class WallTouchSystem : MonoBehaviour
     public enum HandSide { Left, Right }
     public HandSide currentHand;
 
+    public float touchRadius = 0.3f;
+    public float touchStrength = 0.4f;
+    public Color touchColor = Color.red;
+
     [Header("Core Settings")]
     [Tooltip("The actual hand model to move.")]
     public Transform handModel;
@@ -118,6 +122,8 @@ public class WallTouchSystem : MonoBehaviour
         // Move Hand
         handModel.position = Vector3.Lerp(handModel.position, targetPos, Time.deltaTime * movementSpeed);
         handModel.rotation = Quaternion.Slerp(handModel.rotation, targetRot, Time.deltaTime * rotationSpeed);
+
+        TouchTrace(targetPos, hit.collider);
     }
 
     void RetractHand()
@@ -151,6 +157,15 @@ public class WallTouchSystem : MonoBehaviour
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(origin, origin + t.forward * reachDistance);
             }
+        }
+    }
+
+    void TouchTrace(Vector3 point, Collider collider)
+    {
+        Paintable p = collider.GetComponent<Paintable>();
+        if (p != null)
+        {
+            PaintManager.instance.paint(p, point, touchRadius, 0.1f, touchStrength, touchColor);
         }
     }
 }
