@@ -13655,6 +13655,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DangerZone
       objectReference: {fileID: 0}
+    - target: {fileID: 7901220388541215714, guid: af3ceaa536c626248bbc03a4e9bbe410, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
