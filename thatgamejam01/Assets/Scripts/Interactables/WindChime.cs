@@ -11,6 +11,8 @@ public class WindChime : MonoBehaviour, IInteractable
     private Material defaultMaterial;
     private SmartAudioSource smarAudioSource;
     private AudioSource audioSource;
+
+    public Animator chimeAnimator;
     
     
     // Start is called before the first frame update
@@ -39,6 +41,9 @@ public class WindChime : MonoBehaviour, IInteractable
         //关闭当前smart audio 和 audio source
         smarAudioSource.enabled = false;
         audioSource.enabled = false;
+        
+        //停止风铃的动画
+        chimeAnimator.SetBool("IsActivated",false);
 
         //风铃只能交互一次
         _hasTriggered = true;

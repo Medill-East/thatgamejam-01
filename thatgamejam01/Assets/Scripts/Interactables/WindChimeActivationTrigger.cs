@@ -7,6 +7,8 @@ public class WindChimeActivationTrigger : MonoBehaviour
 {
     private LightingSwitcher _lightSwitcher;
     public SmartAudioSource chimeAudio;
+
+    public Animator chimeAnimator;
     
     void Start()
     {
@@ -23,6 +25,9 @@ public class WindChimeActivationTrigger : MonoBehaviour
             //风铃声音激活之后关闭trigger 以及对应触发器
             gameObject.GetComponent<BoxCollider>().enabled = false;
             gameObject.GetComponent<WindChimeActivationTrigger>().enabled = false;
+            
+            //激活风铃的动画
+            chimeAnimator.SetBool("IsActivated",true);
         }
     }
 }

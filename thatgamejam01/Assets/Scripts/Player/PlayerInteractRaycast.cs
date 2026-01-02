@@ -53,16 +53,18 @@ public class PlayerInteractRaycast : MonoBehaviour
         // 发射射线
         if (Physics.Raycast(ray, out hit, interactDistance,finalMask))
         {
-            //Debug.Log(hit.transform.gameObject.name);
+            Debug.Log(hit.transform.gameObject.name);
             // 检查是不是看向了"Interactable"标签的物体
             if (hit.collider.CompareTag("Interactable"))
             {
                 //如果交互对象是风铃
                 if (hit.collider.gameObject.GetComponent<WindChime>() != null)
                 {
+                    Debug.Log("hit windchime");
                     //当风铃已经被交互过 或者 当前不是黑天 均无法交互
                     if (hit.collider.gameObject.GetComponent<WindChime>()._hasTriggered || !_lightSwitcher.isDark)
                     {
+                        Debug.Log("cant interact with wind chime");
                         return;
                     }
                 }
