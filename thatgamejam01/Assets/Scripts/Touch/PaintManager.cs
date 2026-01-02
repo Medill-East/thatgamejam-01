@@ -99,9 +99,10 @@ public class PaintManager : Singleton<PaintManager>{
             decayMaterial.SetTexture(textureID, support);
             decayMaterial.SetFloat(decayTimeID, touchDecayTime);
             
-            command.SetRenderTarget(support);
+            command.SetRenderTarget(extend);
             command.DrawRenderer(rend, decayMaterial, 0);
-            command.Blit(support, extend);
+            command.SetRenderTarget(support);
+            command.Blit(extend, support);
             
             Graphics.ExecuteCommandBuffer(command);
             command.Clear();
