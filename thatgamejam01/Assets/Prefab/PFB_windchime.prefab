@@ -15876,15 +15876,15 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 256
-  occludedVolume: 0.4
-  occludedFacingFreq: 3200
-  occludedBackingFreq: 600
+  occludedVolume: 0.5
+  occludedFacingFreq: 6400
+  occludedBackingFreq: 3200
   smoothSpeed: 10
   useDirectivity: 1
-  facingFreq: 22000
-  backingFreq: 2500
+  facingFreq: 25600
+  backingFreq: 12800
   backingVolumeMultiplier: 0.3
-  externalVolumeMult: -100
+  externalVolumeMult: 1
 --- !u!169 &6187460991143445193
 AudioLowPassFilter:
   m_ObjectHideFlags: 0

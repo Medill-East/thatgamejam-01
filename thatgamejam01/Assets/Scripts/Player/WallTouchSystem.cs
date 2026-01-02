@@ -22,6 +22,8 @@ public class WallTouchSystem : MonoBehaviour
     [Header("Raycast Settings")]
     [Tooltip("How far the player can reach.")]
     public float reachDistance = 1.0f;
+    [Tooltip("Radius of the detection sphere (arm thickness).")]
+    public float detectionRadius = 0.1f;
     [Tooltip("Height offset for the shoulder relative to camera if no transform provided.")]
     public Vector3 shoulderOffset = new Vector3(0.2f, -0.2f, 0f); // Default: Right side, slightly down
 
@@ -84,7 +86,8 @@ public class WallTouchSystem : MonoBehaviour
         _debugRayEnd = rayOrigin + rayDirection * reachDistance;
 
         RaycastHit hit;
-        bool hitSomething = Physics.Raycast(rayOrigin, rayDirection, out hit, reachDistance, touchableLayers);
+        // Changed to SphereCast for better detection of thin objects
+        bool hitSomething = Physics.SphereCast(rayOrigin, detectionRadius, rayDirection, out hit, reachDistance, touchableLayers);
 
         if (hitSomething)
         {
@@ -145,6 +148,11 @@ public class WallTouchSystem : MonoBehaviour
         {
             Gizmos.color = _isTouching ? Color.green : Color.red;
             Gizmos.DrawLine(_debugRayOrigin, _debugRayEnd);
+            
+            // Draw sphere at start and end for visualization
+            Gizmos.DrawWireSphere(_debugRayOrigin, detectionRadius);
+            Gizmos.DrawWireSphere(_debugRayEnd, detectionRadius);
+            
             if(_isTouching) Gizmos.DrawWireSphere(_debugRayEnd, 0.05f);
         }
         else
@@ -156,6 +164,8 @@ public class WallTouchSystem : MonoBehaviour
                 Vector3 origin = shoulderTransform != null ? shoulderTransform.position : t.TransformPoint(shoulderOffset);
                 Gizmos.color = Color.yellow;
                 Gizmos.DrawLine(origin, origin + t.forward * reachDistance);
+                Gizmos.DrawWireSphere(origin, detectionRadius);
+                Gizmos.DrawWireSphere(origin + t.forward * reachDistance, detectionRadius);
             }
         }
     }
