@@ -11,6 +11,7 @@ public class WindChime : MonoBehaviour, IInteractable
     private Material defaultMaterial;
     private SmartAudioSource smarAudioSource;
     private AudioSource audioSource;
+    public GameObject windChimeHead;
 
     public Animator chimeAnimator;
     
@@ -37,6 +38,7 @@ public class WindChime : MonoBehaviour, IInteractable
 
         //交互后风铃一直显示
         gameObject.GetComponent<MeshRenderer>().material = ignoreFogMaterial;
+        windChimeHead.GetComponent<MeshRenderer>().material = ignoreFogMaterial;
         
         //关闭当前smart audio 和 audio source
         smarAudioSource.enabled = false;
@@ -55,6 +57,7 @@ public class WindChime : MonoBehaviour, IInteractable
     public void ResetWindChime()
     {
         gameObject.GetComponent<MeshRenderer>().material = defaultMaterial;
+        windChimeHead.GetComponent<MeshRenderer>().material = defaultMaterial;
         audioSource.enabled = true;
         _hasTriggered = false;
         chimeAnimator.SetBool("IsActivated",true);
