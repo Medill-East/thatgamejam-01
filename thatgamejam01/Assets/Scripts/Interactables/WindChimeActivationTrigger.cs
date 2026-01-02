@@ -21,7 +21,7 @@ public class WindChimeActivationTrigger : MonoBehaviour
             chimeAudio.externalVolumeMult = 1;
             
             //风铃声音激活之后关闭trigger 以及对应触发器
-            gameObject.GetComponent<SphereCollider>().enabled = false;
+            gameObject.GetComponent<BoxCollider>().enabled = false;
             gameObject.GetComponent<WindChimeActivationTrigger>().enabled = false;
         }
     }

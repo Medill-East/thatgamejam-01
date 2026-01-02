@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3213128723256595118}
   - component: {fileID: 6487210750307521289}
   - component: {fileID: 1527278635813244665}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,9 +128,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3627417885661108196}
   - component: {fileID: 6356766355694954588}
-  - component: {fileID: 8328615242156632788}
   - component: {fileID: 3895387371880032586}
-  m_Layer: 0
+  - component: {fileID: 5151203837884692598}
+  m_Layer: 8
   m_Name: PFB_windchime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -169,27 +169,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   extendsIslandOffset: 1
---- !u!135 &8328615242156632788
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7490999614872087898}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3895387371880032586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,6 +182,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chimeAudio: {fileID: 7948181339049359368}
+--- !u!65 &5151203837884692598
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7490999614872087898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7695939920997732112
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,8 +214,8 @@ GameObject:
   - component: {fileID: 5117358360221125070}
   - component: {fileID: 5824221533972964965}
   - component: {fileID: 7948181339049359368}
-  - component: {fileID: 4879065881421352378}
-  m_Layer: 0
+  - component: {fileID: 6187460991143445193}
+  m_Layer: 8
   m_Name: audio_windchimes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -403,7 +403,7 @@ MonoBehaviour:
   backingFreq: 2500
   backingVolumeMultiplier: 0.3
   externalVolumeMult: -100
---- !u!169 &4879065881421352378
+--- !u!169 &6187460991143445193
 AudioLowPassFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -436,6 +436,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3627417885661108196}
     m_Modifications:
+    - target: {fileID: 173626, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 173626, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: m_TagString
       value: Interactable
@@ -547,6 +551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ignoreFogMaterial: {fileID: 2100000, guid: 25e7543d992dc8b44ab91b8cd725629a, type: 2}
+  _hasTriggered: 0
 --- !u!4 &4288055667812397776 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 433148, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
@@ -615,6 +620,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 89b349bcd05625b41b3025e8d438322f, type: 3}
       propertyPath: m_Name
       value: Furin
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 89b349bcd05625b41b3025e8d438322f, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
