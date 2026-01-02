@@ -2,71 +2,194 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WindChime : MonoBehaviour, IInteractable
+public class WindChime : MonoBehaviour
 {
-    private bool _isInteracting = false;
-    public Material ignoreFogMaterial;
+    [Header("Interaction Settings")]
+    public float interactionSpeed = 0.5f; // Time to complete = 1 / speed
+    public float decaySpeed = 0.3f;
+    public float touchDistance = 0.5f; // Distance to consider "touching"
+    
+    [Header("Visual Feedback")]
+    public Light[] feedbackLights; // The lights to brighten
+    public float maxLightIntensity = 2.0f;
+    public AnimationCurve lightIntensityCurve = AnimationCurve.Linear(0, 0, 1, 1);
+    
+    [Header("References")]
+    public Transform interactionPoint; // Center point for distance check (default to transform)
+    public WallTouchSystem wallTouchSystem; // Reference to player's hand system
 
+    [Header("Legacy / Existing")]
+    public Material ignoreFogMaterial;
     public bool _hasTriggered = false;
     private Material defaultMaterial;
-    private SmartAudioSource smarAudioSource;
+    private SmartAudioSource smartAudioSource;
     private AudioSource audioSource;
     public GameObject[] windChimeHeads;
     public Material[] windChimeMaterials;
-
     public Animator chimeAnimator;
     
-    
+    private float _currentProgress = 0f;
+    private bool _isComplete = false;
+
     // Start is called before the first frame update
     void Start()
     {
         defaultMaterial = GetComponent<MeshRenderer>().material;
-        smarAudioSource = gameObject.transform.parent.GetChild(0).gameObject.GetComponent<SmartAudioSource>();
-        audioSource = gameObject.transform.parent.GetChild(0).gameObject.GetComponent<AudioSource>();
+        
+        // Safety check for parent hierarchy structure logic from original code
+        // Original: smarAudioSource = gameObject.transform.parent.GetChild(0).gameObject.GetComponent<SmartAudioSource>();
+        if (transform.parent != null && transform.parent.childCount > 0)
+        {
+            var audioObj = transform.parent.GetChild(0).gameObject;
+            if(audioObj != null) 
+            {
+                smartAudioSource = audioObj.GetComponent<SmartAudioSource>();
+                audioSource = audioObj.GetComponent<AudioSource>();
+            }
+        }
+
+        if (interactionPoint == null) interactionPoint = transform;
+
+        // Auto-find WallTouchSystem if not assigned
+        if (wallTouchSystem == null)
+        {
+            wallTouchSystem = FindObjectOfType<WallTouchSystem>();
+        }
+        
+        // Initialize Lights
+        if (feedbackLights != null)
+        {
+            foreach(var light in feedbackLights)
+            {
+                if(light != null)
+                {
+                    light.intensity = 0f;
+                    light.gameObject.SetActive(true);
+                }
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (_isComplete) return;
+
+        UpdateInteractionLogic();
     }
     
-    public void OnInteract()
+    void UpdateInteractionLogic()
+    {
+        bool isTouching = CheckTouch();
+
+        if (isTouching)
+        {
+            _currentProgress += interactionSpeed * Time.deltaTime;
+        }
+        else
+        {
+            _currentProgress -= decaySpeed * Time.deltaTime;
+        }
+
+        _currentProgress = Mathf.Clamp01(_currentProgress);
+
+        UpdateVisuals();
+
+        if (_currentProgress >= 1.0f)
+        {
+            CompleteInteraction();
+        }
+    }
+
+    bool CheckTouch()
+    {
+        if (wallTouchSystem == null || wallTouchSystem.handModel == null) return false;
+
+        float dist = Vector3.Distance(wallTouchSystem.handModel.position, interactionPoint.position);
+        return dist <= touchDistance;
+    }
+
+    void UpdateVisuals()
+    {
+        if (feedbackLights != null)
+        {
+            float targetIntensity = lightIntensityCurve.Evaluate(_currentProgress) * maxLightIntensity;
+            foreach(var light in feedbackLights)
+            {
+                if(light != null) light.intensity = targetIntensity;
+            }
+        }
+    }
+    
+    void CompleteInteraction()
     {
         if (_hasTriggered) return;
         
-        Debug.Log("player touch wind chime");
-
-        //交互后风铃一直显示
-        gameObject.GetComponent<MeshRenderer>().material = ignoreFogMaterial;
-        foreach (var windChiemHead in windChimeHeads)
-        {
-            windChiemHead.GetComponent<MeshRenderer>().material = ignoreFogMaterial;
-        }
-        
-        //关闭当前smart audio 和 audio source
-        smarAudioSource.enabled = false;
-        audioSource.enabled = false;
-        
-        //停止风铃的动画
-        chimeAnimator.SetBool("IsActivated",false);
-
-        //风铃只能交互一次
+        _isComplete = true;
         _hasTriggered = true;
         
-        if (_isInteracting) return;
-        _isInteracting = true;
+        Debug.Log("Wind chime interaction complete");
+
+        // Interaction complete - keep lights fully on
+        if (feedbackLights != null)
+        {
+            foreach(var light in feedbackLights)
+            {
+                if(light != null) light.intensity = maxLightIntensity;
+            }
+        }
+
+        // Apply legacy completion logic
+        if (GetComponent<MeshRenderer>() != null)
+            GetComponent<MeshRenderer>().material = ignoreFogMaterial;
+            
+        if (windChimeHeads != null)
+        {
+            foreach (var windChiemHead in windChimeHeads)
+            {
+                if (windChiemHead != null)
+                    windChiemHead.GetComponent<MeshRenderer>().material = ignoreFogMaterial;
+            }
+        }
+        
+        // Stop audio
+        if (smartAudioSource != null) smartAudioSource.enabled = false;
+        if (audioSource != null) audioSource.enabled = false;
+        
+        // Stop animation
+        if (chimeAnimator != null) chimeAnimator.SetBool("IsActivated", false);
     }
 
     public void ResetWindChime()
     {
-        gameObject.GetComponent<MeshRenderer>().material = defaultMaterial;
-        for (int i = 0; i < windChimeHeads.Length; i++)
-        {
-            windChimeHeads[i].GetComponent<MeshRenderer>().material = windChimeMaterials[i];
-        }
-        audioSource.enabled = true;
+        _currentProgress = 0f;
+        _isComplete = false;
         _hasTriggered = false;
-        chimeAnimator.SetBool("IsActivated",true);
+        
+        // Reset all lights
+        if (feedbackLights != null)
+        {
+            foreach(var light in feedbackLights)
+            {
+                if(light != null) light.intensity = 0f;
+            }
+        }
+
+        if (GetComponent<MeshRenderer>() != null)
+            GetComponent<MeshRenderer>().material = defaultMaterial;
+            
+        if (windChimeHeads != null && windChimeMaterials != null)
+        {
+            for (int i = 0; i < windChimeHeads.Length; i++)
+            {
+                 if (windChimeHeads[i] != null && i < windChimeMaterials.Length)
+                    windChimeHeads[i].GetComponent<MeshRenderer>().material = windChimeMaterials[i];
+            }
+        }
+        
+        if (audioSource != null) audioSource.enabled = true;
+        if (smartAudioSource != null) smartAudioSource.enabled = true;
+        
+        if (chimeAnimator != null) chimeAnimator.SetBool("IsActivated", true);
     }
 }
