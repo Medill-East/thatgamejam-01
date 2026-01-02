@@ -77,45 +77,46 @@ public class SmartAudioSource : MonoBehaviour
         }
     }
 
-    void Update()
+    void LateUpdate()
     {
-        if (playerCamera == null) return;
+        // 【核心修复】每一帧都获取当前的 Camera.main，确保跟对人
+        Transform targetCam = playerCamera; // Fallback
+        if (Camera.main != null) 
+        {
+            targetCam = Camera.main.transform;
+            playerCamera = targetCam; // sync back just in case
+        }
+        
+        if (targetCam == null) return;
 
         // 基础计算
-        // 1. 距离衰减由 AudioSource 自带的 3D Settings 负责 (Logarithmic / Linear Rolloff)
+        // 1. 距离衰减由 AudioSource 自带的 3D Settings 负责
         
         // 2. 计算朝向因子 (1=正对, 0=背对)
         float focusFactor = 1f;
         if (useDirectivity)
         {
-            Vector3 toSource = (transform.position - playerCamera.position).normalized;
-            float angle = Vector3.Angle(playerCamera.forward, toSource);
-            // 简单线性映射 0~180 -> 1~0
+            // 使用 targetCam (真相机) 计算方向
+            Vector3 toSource = (transform.position - targetCam.position).normalized;
+            float angle = Vector3.Angle(targetCam.forward, toSource);
+            
             float linearFactor = 1f - (angle / 180f); 
-            // 平方处理，让变化曲线更自然 (中间区域变化平滑，两头陡)
-            // focusFactor = linearFactor * linearFactor; 
-            focusFactor = linearFactor; // 暂时用线性试听效果，或者用平方
+            focusFactor = linearFactor; 
         }
 
         // 3. 计算 "无遮挡情况" 下的目标值
-        // 频率
-        float clearFreq = Mathf.Lerp(backingFreq, facingFreq, focusFactor * focusFactor); // 频率通常用非线性插值听感更好
-        // 音量基数 (外部控制 * 初始音量) in case we need external scaler
+        float clearFreq = Mathf.Lerp(backingFreq, facingFreq, focusFactor * focusFactor); 
         float baseVol = _startVolume * externalVolumeMult;
-        // 朝向音量
         float clearVol = Mathf.Lerp(baseVol * backingVolumeMultiplier, baseVol, focusFactor);
 
         // 4. 检测遮挡 + 应用遮挡逻辑
-        bool isOccluded = CheckOcclusion();
+        // 传入 targetCam，保证 CheckOcclusion 也就这个相机检测
+        bool isOccluded = CheckOcclusion(targetCam);
 
         if (isOccluded)
         {
             // --- 有遮挡 ---
-            // 4.1 频率：在 "遮挡频率范围" 内根据朝向变化
-            // 如果正对墙(音源)，稍微清晰一点(1600)，背对墙，更闷(600)
             _targetCutoff = Mathf.Lerp(occludedBackingFreq, occludedFacingFreq, focusFactor * focusFactor);
-
-            // 4.2 音量：在 "朝向修正后的音量" 基础上，再乘一个遮挡系数
             _targetVolume = clearVol * occludedVolume;
         }
         else
@@ -131,19 +132,46 @@ public class SmartAudioSource : MonoBehaviour
         _lpf.cutoffFrequency = _currentCutoff;
     }
 
-    bool CheckOcclusion()
+    // 修改签名，接受 targetCam 参数
+    bool CheckOcclusion(Transform targetCam)
     {
-        RaycastHit hit;
-        Vector3 direction = playerCamera.position - transform.position;
-        float distance = direction.magnitude;
-        Vector3 startPoint = transform.position + Vector3.up * 0.5f;
+        if (targetCam == null) return false;
 
-        if (Physics.Raycast(startPoint, direction, out hit, distance, obstacleLayer))
+        Vector3 direction = targetCam.position - transform.position;
+        float fullDistance = direction.magnitude;
+        
+        float checkDistance = fullDistance - 0.8f;
+        if (checkDistance <= 0.1f) return false;
+
+        // 起点偏移
+        Vector3 startOffset = direction.normalized * 0.1f;
+        Vector3 startPoint = transform.position + startOffset; 
+        checkDistance -= 0.1f;
+        
+        if (checkDistance <= 0) return false;
+
+        RaycastHit hit;
+        
+        // 强制忽略 Trigger
+        if (Physics.Raycast(startPoint, direction.normalized, out hit, checkDistance, obstacleLayer, QueryTriggerInteraction.Ignore))
         {
             if (!hit.collider.CompareTag("Player")) 
             {
+                // 【调试信息】
+                // 打印出：我是谁？我用的相机是谁？相机在哪？挡我的是谁？
+                /*Debug.Log($"[SmartAudioSource: {this.name}] \n" +
+                          $"  -> TargetCam: {targetCam.name} (Pos: {targetCam.position}) \n" +
+                          $"  -> Occluded by: {hit.collider.name} (Tag: {hit.collider.tag})");*/
+                
+                Debug.DrawLine(startPoint, hit.point, Color.red);
                 return true; 
             }
+        }
+        else 
+        {
+            // 如果没遮挡，画黄线
+            // 为了区分不同实例，稍微改变一下颜色或者打印log
+            Debug.DrawLine(startPoint, targetCam.position, Color.yellow);
         }
         return false;
     }

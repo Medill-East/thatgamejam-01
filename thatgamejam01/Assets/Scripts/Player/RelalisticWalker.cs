@@ -42,12 +42,32 @@ public class RealisticWalker : MonoBehaviour
     private bool _hasSteppedLeft = false;
     private bool _hasSteppedRight = false;
 
+    // 内部变量
+    private Transform _targetBobTransform; // 实际用于晃动的物体 (通常是 CinemachineCameraTarget)
+
     void Start()
     {
         if (controller == null) controller = GetComponent<CharacterController>();
         if (footstepSource == null) footstepSource = GetComponent<AudioSource>();
 
-        _startCameraPos = cameraTransform.localPosition;
+        // 【修复】自动寻找正确的晃动目标
+        // 如果有 FirstPersonController，就动它的 CinemachineCameraTarget
+        // 否则才动 cameraTransform
+        var fpc = GetComponent<StarterAssets.FirstPersonController>();
+        if (fpc != null && fpc.CinemachineCameraTarget != null)
+        {
+            _targetBobTransform = fpc.CinemachineCameraTarget.transform;
+        }
+        else
+        {
+            _targetBobTransform = cameraTransform;
+        }
+        
+        if (_targetBobTransform != null)
+        {
+            _startCameraPos = _targetBobTransform.localPosition;
+        }
+        
         _startLeftFootPos = leftFoot.localPosition;
         _startRightFootPos = rightFoot.localPosition;
     }
@@ -70,9 +90,12 @@ public class RealisticWalker : MonoBehaviour
             _timer += Time.deltaTime * bobFrequency * speedFactor;
 
             // 1. 镜头晃动
-            float yOffset = Mathf.Sin(_timer) * bobHeight;
-            float xOffset = Mathf.Cos(_timer / 2) * bobSway; 
-            cameraTransform.localPosition = new Vector3(_startCameraPos.x + xOffset, _startCameraPos.y + yOffset, _startCameraPos.z);
+            if (_targetBobTransform != null)
+            {
+                float yOffset = Mathf.Sin(_timer) * bobHeight;
+                float xOffset = Mathf.Cos(_timer / 2) * bobSway; 
+                _targetBobTransform.localPosition = new Vector3(_startCameraPos.x + xOffset, _startCameraPos.y + yOffset, _startCameraPos.z);
+            }
 
             // 2. 获取节奏循环
             float cycle = Mathf.Sin(_timer);
