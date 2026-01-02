@@ -51,9 +51,8 @@ public class RealisticWalker : MonoBehaviour
         if (footstepSource == null) footstepSource = GetComponent<AudioSource>();
 
         // 【修复】自动寻找正确的晃动目标
-        // 如果有 FirstPersonController，就动它的 CinemachineCameraTarget
-        // 否则才动 cameraTransform
-        var fpc = GetComponent<StarterAssets.FirstPersonController>();
+        // 使用 GetComponentInParent 以防脚本挂在子物体上
+        var fpc = GetComponentInParent<StarterAssets.FirstPersonController>();
         if (fpc != null && fpc.CinemachineCameraTarget != null)
         {
             _targetBobTransform = fpc.CinemachineCameraTarget.transform;
@@ -66,6 +65,11 @@ public class RealisticWalker : MonoBehaviour
         if (_targetBobTransform != null)
         {
             _startCameraPos = _targetBobTransform.localPosition;
+            Debug.Log($"[RealisticWalker] Bobbing Target: {_targetBobTransform.name} (Parent: {(_targetBobTransform.parent != null ? _targetBobTransform.parent.name : "null")})");
+        }
+        else
+        {
+             Debug.LogWarning("[RealisticWalker] No Bobbing Target found!");
         }
         
         _startLeftFootPos = leftFoot.localPosition;
