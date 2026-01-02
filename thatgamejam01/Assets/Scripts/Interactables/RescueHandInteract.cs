@@ -97,7 +97,6 @@ public class RescueHandInteract : MonoBehaviour, IInteractable
         }
 
         // 4. Fade Out
-        // 4. Fade Out
         if (fader != null)
         {
             yield return fader.FadeOut();
