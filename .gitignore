@@ -98,3 +98,7 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 thatgamejam01/ProjectSettings/Packages/com.unity.probuilder/Settings.json
+thatgamejam01/ProjectSettings/Packages/com.unity.polybrush/Settings.json
+thatgamejam01/ProjectSettings/Packages/com.unity.probuilder/Settings.json
+thatgamejam01/ProjectSettings/Packages/com.unity.testtools.codecoverage/Settings.json
+thatgamejam01/ProjectSettings/ShaderGraphSettings.asset

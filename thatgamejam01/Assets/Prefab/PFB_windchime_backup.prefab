@@ -8670,7 +8670,7 @@ Transform:
   m_GameObject: {fileID: 4617710714841956756}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.552, y: 0.909, z: 22.644}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.82322, y: 0.82322, z: 0.82322}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8836,6 +8836,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ignoreFogMaterial: {fileID: 2100000, guid: 25e7543d992dc8b44ab91b8cd725629a, type: 2}
   _hasTriggered: 0
+  windChimeHead: {fileID: 0}
   chimeAnimator: {fileID: 7041524683608437196}
 --- !u!114 &4755339756445380451
 MonoBehaviour:
