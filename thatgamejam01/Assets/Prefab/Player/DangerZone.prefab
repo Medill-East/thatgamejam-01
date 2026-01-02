@@ -402,6 +402,8 @@ MonoBehaviour:
   splashSound: {fileID: 8300000, guid: 7f5b1f76d0c380549a767231ee0f7db6, type: 3}
   respawnPoint: {fileID: 5159994533204330142}
   playerRightHand: {fileID: 0}
+  lightingSwitcher: {fileID: 0}
+  whiteFlashCanvasPrefab: {fileID: 0}
 --- !u!1001 &369819354515770581
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -417,6 +419,18 @@ PrefabInstance:
     - target: {fileID: 1951503978296017471, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_TagString
       value: Untagged
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336584352854814357, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: m_Size.x
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336584352854814357, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: m_Size.y
+      value: 0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 2336584352854814357, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: m_Size.z
+      value: 0.002
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalPosition.x
@@ -525,15 +539,15 @@ MonoBehaviour:
   lullabySource: {fileID: 1530179015521622789}
   whiteFlashCanvasPrefab: {fileID: 6223599391975070996, guid: 2705b24e1f6c1454697303aacbed6fb6, type: 3}
   rescueSuccessSound: {fileID: 8300000, guid: ea990ad4fac7d984b8a38eefe8c40f75, type: 3}
-  maxGazeAngle: 15
+  maxGazeAngle: 10
   rescueDuration: 5
   maxFailureTime: 30
   minLightIntensity: 0.01
   maxLightIntensity: 0.1
-  minVolume: 0.1
+  minVolume: 0.2
   maxVolume: 1
   maxHandExtension: 1.3
-  reachingRotationOffset: {x: -15, y: 0, z: 90}
+  reachingRotationOffset: {x: -30, y: -30, z: 90}
   playerRef: {fileID: 0}
   respawnPointRef: {fileID: 0}
   playerHandRef: {fileID: 0}
@@ -541,8 +555,10 @@ MonoBehaviour:
   fakeHandPrefab: {fileID: 0}
   maxDistance: 3
   successDistance: 0.1
-  handMoveSpeed: 0.15
-  handReturnSpeed: 0.1
+  fadeStartDist: 1
+  handMoveSpeed: 0.5
+  handReturnSpeed: 0.2
+  playerHandTriggerDistance: 2
 --- !u!1001 &7021413028573989478
 PrefabInstance:
   m_ObjectHideFlags: 0

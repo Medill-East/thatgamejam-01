@@ -48,13 +48,14 @@ public class RescueHandGaze : MonoBehaviour
     private GameObject _spawnedFakeHand;
     
     // Distance Params
-
     public float maxDistance = 3.0f; // Distance where effects are 0
     public float successDistance = 0.2f; // Touch threshold
+    public float fadeStartDist = 1.0f; // Start fading only when within xm
     
     // Hand Animation
-    public float handMoveSpeed = 1.0f;
+    public float handMoveSpeed = 2.5f; // Increased from 1.0f
     public float handReturnSpeed = 2.0f;
+    public float playerHandTriggerDistance = 1.2f; // Distance at which player hand starts reaching
 
     private void OnEnable()
     {
@@ -163,16 +164,12 @@ public class RescueHandGaze : MonoBehaviour
 
     private ScreenFader _faderInstance;
 
-    // Removed Start() as Setup is now in OnEnable logic is safer for SetActive/Deactive flows
-    // private void Start() { ... }
-
     private void Update()
     {
         if (_isRescued || _isGameOver) return;
         
         if (playerRef == null) 
         {
-            // Debug.LogWarning("[RescueHandGaze] Waiting for PlayerRef..."); // Spammy
             return;
         }
 
@@ -202,9 +199,6 @@ public class RescueHandGaze : MonoBehaviour
         Vector3 playerLook = mainCam.transform.forward;
 
         float angle = Vector3.Angle(playerLook, toHand);
-        
-        // Debug Log (Throttle this if needed, or just watch console)
-        // Debug.Log($"[RescueHandGaze] Angle: {angle}, Progress: {_currentRescueProgress}");
 
         // 2. Determine "Looking At" status
         bool isLooking = angle < maxGazeAngle;
@@ -212,6 +206,10 @@ public class RescueHandGaze : MonoBehaviour
         // 3. Distance & Movement Logic
         float currentDist = maxDistance; // Default if no hand
         
+        // Calculate raw distance first for logic checks
+        Vector3 targetPoint = (playerHandRef != null) ? playerHandRef.position : mainCam.transform.position;
+        float rawDistanceToCam = Vector3.Distance(handVisualRoot.position, mainCam.transform.position);
+
         if (isLooking)
         {
              // Move Rescue Hand towards Camera
@@ -219,7 +217,8 @@ public class RescueHandGaze : MonoBehaviour
              transform.position += dirToCam * handMoveSpeed * Time.deltaTime;
              
              // Move Player Hand towards Rescue Hand (World Space Direction)
-             if (playerHandRef != null)
+             // Only if Rescue Hand is close enough
+             if (playerHandRef != null && rawDistanceToCam < playerHandTriggerDistance)
              {
                  // 1. 旋转手掌朝向目标
                  Vector3 directionToTarget = (handVisualRoot.position - playerHandRef.position).normalized;
@@ -234,7 +233,7 @@ public class RescueHandGaze : MonoBehaviour
                  }
 
                  // 2. 向目标移动
-                 playerHandRef.position += directionToTarget * (handMoveSpeed * 2.0f) * Time.deltaTime;
+                 playerHandRef.position += directionToTarget * (handMoveSpeed * 1.5f) * Time.deltaTime; // Slightly slower than before relative to mom
 
                  // 3. 【修复】基于球形距离的限制，而不是单纯 Z 轴
                  float dist = Vector3.Distance(playerHandRef.localPosition, _initialPlayerHandLocalPos);
@@ -257,9 +256,9 @@ public class RescueHandGaze : MonoBehaviour
             }
         }
 
-        // 4. Calculate effect distance
-        // If we have a hand ref, use distance between hands. Else distance to camera.
-        Vector3 targetPoint = (playerHandRef != null) ? playerHandRef.position : mainCam.transform.position;
+        // 4. Calculate effect distance (Recalculate accurately)
+        // distance between hands if possible
+        if (playerHandRef != null) targetPoint = playerHandRef.position; // Ensure target is player hand
         currentDist = Vector3.Distance(handVisualRoot.position, targetPoint);
         
         // 5. Map to Intensity (Closer = Stronger)
@@ -292,18 +291,24 @@ public class RescueHandGaze : MonoBehaviour
         if (_faderInstance != null)
         {
             // Custom fade logic: Start later, then curve up
-            // "Screen white logic: Start slow then fast, only after certain distance"
+            // User requested "Last 2s" -> Only trigger when very close
             
-            float fadeStartDist = maxDistance * 0.6f; // Start fading when 60% closer (or custom value)
             
-            // Remap distance [fadeStartDist, successDistance] -> [0, 1]
-            float faderProgress = Mathf.InverseLerp(fadeStartDist, successDistance, currentDist);
             
-            // Apply easing (Quadratic or Cubic) for "Slow then Fast"
-            float targetAlpha = faderProgress * faderProgress * faderProgress; // Cubic Ease-In
-            
-            // Smooth the alpha to prevent flickering
-            _currentFaderAlpha = Mathf.Lerp(_currentFaderAlpha, targetAlpha, Time.deltaTime * 5f);
+            if (currentDist < fadeStartDist)
+            {
+                // Remap distance [fadeStartDist, successDistance] -> [0, 1]
+                float faderProgress = Mathf.InverseLerp(fadeStartDist, successDistance, currentDist);
+                
+                // Very steep curve
+                float targetAlpha = faderProgress * faderProgress; 
+                
+                _currentFaderAlpha = Mathf.Lerp(_currentFaderAlpha, targetAlpha, Time.deltaTime * 10f);
+            }
+            else
+            {
+                _currentFaderAlpha = Mathf.Lerp(_currentFaderAlpha, 0f, Time.deltaTime * 5f);
+            }
             
             _faderInstance.SetAlpha(_currentFaderAlpha);
         }
