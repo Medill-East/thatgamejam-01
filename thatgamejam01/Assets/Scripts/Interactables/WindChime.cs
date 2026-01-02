@@ -57,5 +57,6 @@ public class WindChime : MonoBehaviour, IInteractable
         gameObject.GetComponent<MeshRenderer>().material = defaultMaterial;
         audioSource.enabled = true;
         _hasTriggered = false;
+        chimeAnimator.SetBool("IsActivated",true);
     }
 }
