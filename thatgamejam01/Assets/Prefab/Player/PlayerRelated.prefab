@@ -1298,8 +1298,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 3
-  SprintSpeed: 3
+  MoveSpeed: 4
+  SprintSpeed: 4
   RotationSpeed: 1
   SpeedChangeRate: 10
   JumpHeight: 1.2
@@ -2047,8 +2047,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7174909127764704886}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -11.055, y: 1.295, z: 7.323}
+  m_LocalRotation: {x: 0, y: 0.7103374, z: 0, w: 0.70386136}
+  m_LocalPosition: {x: 0.356, y: 1.628, z: 9.537}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2404,7 +2404,7 @@ MonoBehaviour:
   touchableLayers:
     serializedVersion: 2
     m_Bits: 256
-  reachDistance: 1
+  reachDistance: 3
   shoulderOffset: {x: 0.2, y: -0.2, z: 0}
   surfaceOffset: 0
   rotationOffset: {x: -45, y: 30, z: -90}
@@ -2650,7 +2650,7 @@ MonoBehaviour:
   touchableLayers:
     serializedVersion: 2
     m_Bits: 256
-  reachDistance: 1
+  reachDistance: 3
   shoulderOffset: {x: 0.2, y: -0.2, z: 0}
   surfaceOffset: 0
   rotationOffset: {x: -45, y: -30, z: 90}
@@ -2847,11 +2847,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: MoveSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: SprintSpeed
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
