@@ -15,9 +15,9 @@ public class SmartAudioSource : MonoBehaviour
     [Range(0f, 1f)] public float occludedVolume = 0.4f; 
     
     [Tooltip("有遮挡 + 正对声源时的频率 (比如 1600Hz)")]
-    public float occludedFacingFreq = 6400f;
+    public float occludedFacingFreq = 3200;
     [Tooltip("有遮挡 + 背对声源时的频率 (比如 600Hz)")]
-    public float occludedBackingFreq = 1600f;
+    public float occludedBackingFreq = 600f;
 
     public float smoothSpeed = 10f;
 
@@ -28,7 +28,7 @@ public class SmartAudioSource : MonoBehaviour
     public float facingFreq = 22000f;
     
     [Tooltip("无遮挡 + 背对声源时的频率 (闷 800Hz)")]
-    public float backingFreq = 3200f;
+    public float backingFreq = 800f;
 
     [Space(10)]
     [Range(0f, 1f)] 
