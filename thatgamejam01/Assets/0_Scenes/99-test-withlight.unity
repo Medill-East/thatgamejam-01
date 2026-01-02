@@ -13699,6 +13699,46 @@ PrefabInstance:
       propertyPath: touchStrength
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 2143511470245002297, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: movementSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2143511470245002297, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: surfaceOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2143511470245002297, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: rotationOffset.x
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2143511470245002297, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: rotationOffset.y
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2143511470245002297, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: rotationOffset.z
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309173408110671871, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: movementSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309173408110671871, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: surfaceOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309173408110671871, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: rotationOffset.x
+      value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309173408110671871, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: rotationOffset.y
+      value: -30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3309173408110671871, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
+      propertyPath: rotationOffset.z
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 3332624836104062562, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
       propertyPath: visualContactPoint
       value: 

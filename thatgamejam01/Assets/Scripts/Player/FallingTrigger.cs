@@ -100,7 +100,7 @@ public class FallingTrigger : MonoBehaviour
             {
                 if (wts.currentHand == WallTouchSystem.HandSide.Right)
                 {
-                    playerRightHand = wts.handContainer;
+                    playerRightHand = wts.handModel;
                     Debug.Log("[FallingTrigger] Auto-found Right Hand via WallTouchSystem.");
                     break;
                 }
