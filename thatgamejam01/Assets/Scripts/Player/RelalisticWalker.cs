@@ -58,7 +58,16 @@ public class RealisticWalker : MonoBehaviour
 
         if (isMoving)
         {
-            _timer += Time.deltaTime * bobFrequency;
+            // 1. 根据速度调整 Timer (让步频和移动速度绑定)
+            // 假设 referenceSpeed (例如 4m/s) 是 "bobFrequency" 对应的标准速度
+            float referenceSpeed = 4f; 
+            float speedFactor = controller.velocity.magnitude / referenceSpeed;
+            
+            // 限制一下最小值，避免极低速时 timer 几乎不走，导致脚步声卡住
+            // 只要在移动 (isMoving=true)，就至少保持一个很慢的节奏
+            speedFactor = Mathf.Max(speedFactor, 0.2f); 
+
+            _timer += Time.deltaTime * bobFrequency * speedFactor;
 
             // 1. 镜头晃动
             float yOffset = Mathf.Sin(_timer) * bobHeight;

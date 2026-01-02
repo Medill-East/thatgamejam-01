@@ -13589,6 +13589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82d71d8237e0f8c4c958d7feea6ca454, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  teleportOnSwitch: 1
   sunLight: {fileID: 2114283754330233425}
   daySkybox: {fileID: 2100000, guid: aeab33f69c199e54794f516d31450ec4, type: 2}
   mainCamera: {fileID: 8944336656349189699}

@@ -1234,8 +1234,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55919ac34a26952479f3fc91f777b2fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: 4
-  SprintSpeed: 6
+  MoveSpeed: 1.5
+  SprintSpeed: 3
   RotationSpeed: 1
   SpeedChangeRate: 10
   JumpHeight: 1.2
@@ -2552,6 +2552,14 @@ PrefabInstance:
     - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: CanJump
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
+      propertyPath: MoveSpeed
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051221388664296543, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
+      propertyPath: SprintSpeed
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
