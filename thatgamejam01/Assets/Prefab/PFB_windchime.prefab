@@ -15613,6 +15613,73 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!1 &5077229369730702063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 926486728291069872}
+  - component: {fileID: 381700396554769759}
+  - component: {fileID: 4980505536184702223}
+  m_Layer: 8
+  m_Name: TriggerZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &926486728291069872
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5077229369730702063}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3627417885661108196}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &381700396554769759
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5077229369730702063}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4980505536184702223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5077229369730702063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0a15ea3fbef0f04c90c9e05fbc8eff9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetChime: {fileID: 2017055498677327547}
 --- !u!1 &6658503363759450026
 GameObject:
   m_ObjectHideFlags: 0
@@ -15640,7 +15707,7 @@ Transform:
   m_GameObject: {fileID: 6658503363759450026}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.719, y: -0.291, z: 0.186}
+  m_LocalPosition: {x: 0.82, y: -0.291, z: -0.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15657,7 +15724,7 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9245283, g: 0.6546148, b: 0.19362764, a: 1}
   m_Intensity: 0
   m_Range: 10
   m_SpotAngle: 30
@@ -15768,6 +15835,7 @@ Transform:
   - {fileID: 3805936813241792754}
   - {fileID: 4820190686575071541}
   - {fileID: 2021472478850910618}
+  - {fileID: 926486728291069872}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3895387371880032586
@@ -16176,6 +16244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Prop_Bamboo_Pole_01
       objectReference: {fileID: 0}
+    - target: {fileID: 173626, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 433148, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.285
@@ -16221,12 +16293,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1767745269085053325}
     - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+      propertyPath: touchDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: interactionPoint
       value: 
       objectReference: {fileID: 2021472478850910618}
     - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: maxLightIntensity
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: feedbackLights.Array.size
@@ -16297,6 +16373,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+--- !u!114 &2017055498677327547 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+  m_PrefabInstance: {fileID: 4288055667811969324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef12f3be6baec94781a177987f23d47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &4288055667812397776 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 433148, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}

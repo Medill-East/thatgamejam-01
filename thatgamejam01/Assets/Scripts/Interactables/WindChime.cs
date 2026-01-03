@@ -7,18 +7,13 @@ public class WindChime : MonoBehaviour
     [Header("Interaction Settings")]
     public float interactionSpeed = 0.5f; // Time to complete = 1 / speed
     public float decaySpeed = 0.3f;
-    public float touchDistance = 0.5f; // Distance to consider "touching"
+    public bool requireNight = true; // If true, can only interact when LightingSwitcher.isDark is true
     
     [Header("Visual Feedback")]
     public Light[] feedbackLights; // The lights to brighten
     public float maxLightIntensity = 2.0f;
     public AnimationCurve lightIntensityCurve = AnimationCurve.Linear(0, 0, 1, 1);
     
-    [Header("References")]
-    public Transform interactionPoint; // Fallback center point for distance check
-    public Collider[] interactionColliders; // Colliders to check proximity against
-    public WallTouchSystem wallTouchSystem; // Reference to player's hand system
-
     [Header("Legacy / Existing")]
     public Material ignoreFogMaterial;
     public bool _hasTriggered = false;
@@ -31,12 +26,27 @@ public class WindChime : MonoBehaviour
     
     private float _currentProgress = 0f;
     private bool _isComplete = false;
+    private LightingSwitcher _lightSwitcher;
+    private bool _isPlayerInZone = false;
 
     // Start is called before the first frame update
     void Start()
     {
         defaultMaterial = GetComponent<MeshRenderer>().material;
         
+        // Find LightingSwitcher
+        GameObject lightObj = GameObject.Find("Directional Light");
+        if (lightObj != null)
+        {
+            _lightSwitcher = lightObj.GetComponent<LightingSwitcher>();
+        }
+        else
+        {
+            Debug.LogWarning("WindChime: Could not find 'Directional Light' for LightingSwitcher. Day/Night check may fail.");
+            // Fallback: try finding type
+            _lightSwitcher = FindObjectOfType<LightingSwitcher>();
+        }
+
         // Safety check for parent hierarchy structure logic from original code
         if (transform.parent != null && transform.parent.childCount > 0)
         {
@@ -48,20 +58,6 @@ public class WindChime : MonoBehaviour
             }
         }
 
-        if (interactionPoint == null) interactionPoint = transform;
-
-        // Auto-find colliders if not assigned
-        if (interactionColliders == null || interactionColliders.Length == 0)
-        {
-            interactionColliders = GetComponentsInChildren<Collider>();
-        }
-
-        // Auto-find WallTouchSystem if not assigned
-        if (wallTouchSystem == null)
-        {
-            wallTouchSystem = FindObjectOfType<WallTouchSystem>();
-        }
-        
         // Initialize Lights
         if (feedbackLights != null)
         {
@@ -86,9 +82,15 @@ public class WindChime : MonoBehaviour
     
     void UpdateInteractionLogic()
     {
-        bool isTouching = CheckTouch();
+        bool canInteract = _isPlayerInZone;
 
-        if (isTouching)
+        // Day/Night Requirement Check
+        if (requireNight && _lightSwitcher != null && !_lightSwitcher.isDark)
+        {
+            canInteract = false;
+        }
+
+        if (canInteract)
         {
             _currentProgress += interactionSpeed * Time.deltaTime;
         }
@@ -107,33 +109,25 @@ public class WindChime : MonoBehaviour
         }
     }
 
-    bool CheckTouch()
+    public void SetPlayerInZone(bool status)
     {
-        if (wallTouchSystem == null || wallTouchSystem.handModel == null) return false;
+        _isPlayerInZone = status;
+    }
 
-        Vector3 handPos = wallTouchSystem.handModel.position;
-
-        // Method 1: Check Colliders (Closest Point)
-        if (interactionColliders != null && interactionColliders.Length > 0)
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
-            foreach (var col in interactionColliders)
-            {
-                if (col == null) continue;
-                // ClosestPoint returns a point on the collider surface (or inside) closest to handPos
-                Vector3 closestPoint = col.ClosestPoint(handPos);
-                float dist = Vector3.Distance(handPos, closestPoint);
-                if (dist <= touchDistance) return true;
-            }
+            _isPlayerInZone = true;
         }
-        
-        // Method 2: Fallback to single point (only if no colliders found/active)
-        if (interactionPoint != null)
-        {
-             float dist = Vector3.Distance(handPos, interactionPoint.position);
-             return dist <= touchDistance;
-        }
+    }
 
-        return false;
+    void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _isPlayerInZone = false;
+        }
     }
 
     void UpdateVisuals()
