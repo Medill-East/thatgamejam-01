@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6642475084710912503}
   - component: {fileID: 7623999486860539969}
   - component: {fileID: 3437887546554917494}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: bdKit_wall_side_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -14.689999, y: -0.1500001, z: 5.2300034}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2221704844258174646}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: -3887661931434351652, guid: fb5b266426dc9234393c556919c70f40, type: 3}
 --- !u!23 &6642475084710912503
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4eaaa3032586832468e97a6452e498a4, type: 2}
+  - {fileID: 2100000, guid: b95de6e11853d7c44a960e1332a3c0a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
