@@ -175,7 +175,7 @@ public class WallTouchSystem : MonoBehaviour
     void TouchTrace(Vector3 point, Collider collider)
     {
         Paintable p = collider.GetComponent<Paintable>();
-        if (p != null && !lightingSwitcher.isDark)
+        if (p != null && lightingSwitcher.isDark)
         {
             PaintManager.instance.paint(p, point, touchRadius, 0.1f, touchStrength, touchColor);
         }

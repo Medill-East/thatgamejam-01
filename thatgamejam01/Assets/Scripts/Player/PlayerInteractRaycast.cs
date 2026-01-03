@@ -62,7 +62,8 @@ public class PlayerInteractRaycast : MonoBehaviour
                 {
                     Debug.Log("hit windchime");
                     //当风铃已经被交互过 或者 当前不是黑天 均无法交互
-                    if (hit.collider.gameObject.GetComponent<WindChime>()._hasTriggered || !_lightSwitcher.isDark)
+                    if (hit.collider.gameObject.GetComponent<WindChime>()._hasTriggered 
+                        || !_lightSwitcher.isDark)
                     {
                         Debug.Log("cant interact with wind chime");
                         return;
