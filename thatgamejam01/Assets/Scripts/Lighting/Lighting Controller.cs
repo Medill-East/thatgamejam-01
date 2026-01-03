@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
-using TMPro; // 如果使用普通 Text，请删除此行并将 TextMeshProUGUI 改为 Text
+using TMPro;
 
 public class LightingSwitcher : MonoBehaviour
 {
+    [Header("World Objects")]
+    public GameObject waterVFX;        // 拖入你的水特效物体
+
     [Header("Toggle Features")]
-    [Tooltip("如果勾选，按下 F 切换时会传送到起点；如果不勾选，则原地切换。")]
     public bool teleportOnSwitch = true;
 
     [Header("Core Settings")]
@@ -33,14 +35,11 @@ public class LightingSwitcher : MonoBehaviour
     [Header("Environment Fog")]
     public float darkFogDensity = 0.5f;
     public Color darkFogColor = Color.black;
-    
-    private WindChime[] windChimes;
 
     void Start()
     {
         if (mainCamera == null) mainCamera = Camera.main;
 
-        // 记录游戏启动时玩家的位置
         if (playerTransform != null)
         {
             startPosition = playerTransform.position;
@@ -48,18 +47,13 @@ public class LightingSwitcher : MonoBehaviour
         }
 
         if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f;
-
-        // 初始时隐藏年份文字
         if (yearHintText != null) SetYearTextAlpha(0);
 
         ApplyLighting();
-        
-        windChimes = FindObjectsOfType<WindChime>();
     }
 
     void Update()
     {
-        // 同时支持键盘 F 和手柄 LB
         if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.JoystickButton4))
         {
             StopAllCoroutines();
@@ -69,7 +63,6 @@ public class LightingSwitcher : MonoBehaviour
 
     IEnumerator PerformWorldSwitch()
     {
-        // 1. 变黑并显示年份
         if (yearHintText != null)
             yearHintText.text = isDark ? pastText : presentText;
 
@@ -83,27 +76,14 @@ public class LightingSwitcher : MonoBehaviour
             yield return null;
         }
 
-        // 2. 状态切换
         isDark = !isDark;
 
-        // --- 核心逻辑修改：检查 Checkbox 是否勾选 ---
-        if (teleportOnSwitch)
-        {
-            TeleportPlayer();
-        }
+        if (teleportOnSwitch) TeleportPlayer();
 
         ApplyLighting();
 
-        foreach (var chime in windChimes)
-        {
-            chime.ResetWindChime();
-        }
-
-        // 在最黑的时候停留一下，让玩家看清年份
-
         yield return new WaitForSeconds(0.5f);
 
-        // 3. 恢复透明
         elapsed = 0;
         while (elapsed < fadeOutTime)
         {
@@ -115,7 +95,6 @@ public class LightingSwitcher : MonoBehaviour
         }
     }
 
-    // 辅助方法：设置文字透明度
     void SetYearTextAlpha(float alpha)
     {
         if (yearHintText == null) return;
@@ -128,16 +107,22 @@ public class LightingSwitcher : MonoBehaviour
     {
         if (playerTransform == null) return;
         CharacterController cc = playerTransform.GetComponent<CharacterController>();
-        if (cc != null) cc.enabled = false; // 禁用控制器防止传送失败
-
+        if (cc != null) cc.enabled = false;
         playerTransform.position = startPosition;
         playerTransform.rotation = startRotation;
-
         if (cc != null) cc.enabled = true;
     }
 
     void ApplyLighting()
     {
+        // --- 新增：控制水特效显示 ---
+        if (waterVFX != null)
+        {
+            // 如果 isDark 为 false（白天），则 SetActive(true)
+            // 如果 isDark 为 true（黑暗），则 SetActive(false)
+            waterVFX.SetActive(!isDark);
+        }
+
         if (isDark)
         {
             if (sunLight) sunLight.intensity = 0f;
