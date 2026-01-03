@@ -49,6 +49,8 @@ public class WallTouchSystem : MonoBehaviour
     // For debugging/gizmos
     private Vector3 _debugRayOrigin;
     private Vector3 _debugRayEnd;
+    
+    public LightingSwitcher lightingSwitcher;
 
     void Start()
     {
@@ -173,7 +175,7 @@ public class WallTouchSystem : MonoBehaviour
     void TouchTrace(Vector3 point, Collider collider)
     {
         Paintable p = collider.GetComponent<Paintable>();
-        if (p != null)
+        if (p != null && !lightingSwitcher.isDark)
         {
             PaintManager.instance.paint(p, point, touchRadius, 0.1f, touchStrength, touchColor);
         }

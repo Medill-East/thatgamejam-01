@@ -53,7 +53,7 @@ public class PlayerInteractRaycast : MonoBehaviour
         // 发射射线
         if (Physics.Raycast(ray, out hit, interactDistance,finalMask))
         {
-            Debug.Log(hit.transform.gameObject.name);
+            //Debug.Log(hit.transform.gameObject.name);
             // 检查是不是看向了"Interactable"标签的物体
             if (hit.collider.CompareTag("Interactable"))
             {

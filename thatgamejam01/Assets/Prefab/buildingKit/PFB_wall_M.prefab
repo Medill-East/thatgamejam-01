@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2899280397496894034}
   - component: {fileID: 4106018861964815646}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: PFB_wall_M
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.7020046, y: 1.1397837, z: 23.375004}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.4}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1731335962594969113}
@@ -107,6 +107,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: bdKit_wall_main_1 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3110522600786283145, guid: 4fd1d27dd5de90945adb4fdc380a7780, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4171617360050778865, guid: 4fd1d27dd5de90945adb4fdc380a7780, type: 3}
+      propertyPath: m_VersionIndex
+      value: 73
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -168,6 +176,14 @@ PrefabInstance:
     - target: {fileID: 3110522600786283145, guid: 4fd1d27dd5de90945adb4fdc380a7780, type: 3}
       propertyPath: m_Name
       value: bdKit_wall_main_1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3110522600786283145, guid: 4fd1d27dd5de90945adb4fdc380a7780, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4171617360050778865, guid: 4fd1d27dd5de90945adb4fdc380a7780, type: 3}
+      propertyPath: m_VersionIndex
+      value: 73
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
