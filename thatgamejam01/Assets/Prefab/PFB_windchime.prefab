@@ -15960,7 +15960,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 0
-  MinDistance: 3
+  MinDistance: 0.5
   MaxDistance: 20
   Pan2D: 0
   rolloffMode: 1
@@ -16102,6 +16102,30 @@ MonoBehaviour:
     occludedFacingFreq: 12000
     occludedBackingFreq: 8000
     useDirectivity: 0
+    angleAttenuation:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: -0.0055555557
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 180
+        value: 0
+        inSlope: -0.0055555557
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     facingFreq: 22000
     backingFreq: 20000
     backingVolumeMultiplier: 0.8
@@ -16110,6 +16134,30 @@ MonoBehaviour:
     occludedFacingFreq: 6400
     occludedBackingFreq: 3200
     useDirectivity: 1
+    angleAttenuation:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: -0.0055555557
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 180
+        value: 0
+        inSlope: -0.0055555557
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     facingFreq: 25600
     backingFreq: 12800
     backingVolumeMultiplier: 0.25
@@ -21727,6 +21775,10 @@ PrefabInstance:
       propertyPath: interactionPoint
       value: 
       objectReference: {fileID: 2021472478850910618}
+    - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+      propertyPath: interactionSpeed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: maxLightIntensity
       value: 1
