@@ -84,10 +84,9 @@ namespace StarterAssets
 
 		public void SprintInput(bool newSprintState)
 		{
-            if (movementEnabled)
-			    sprint = newSprintState;
-            else 
-                sprint = false;
+            // Allow tracking sprint state even if movement is disabled
+            // This ensures resume-to-sprint works if key is held
+			sprint = newSprintState;
 		}
 		
 		private void OnApplicationFocus(bool hasFocus)

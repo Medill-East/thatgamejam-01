@@ -80,7 +80,7 @@ public class FallingTrigger : MonoBehaviour
         {
             inputs.movementEnabled = false;
             inputs.move = Vector2.zero;
-            inputs.sprint = false;
+            // inputs.sprint = false; <-- REMOVED
         }
 
         yield return new WaitForSeconds(timeBeforeGasp);

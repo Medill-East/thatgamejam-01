@@ -84,7 +84,10 @@ public class MotherTreeTrigger : MonoBehaviour
 
         // 2. Call the standard switch with Force Teleport enabled
         // targetState = true (Dark), forceTeleport = true
-        yield return lightingSwitcher.PerformWorldSwitch(true, true);
+        // 【关键修复】必须在 LightingSwitcher 上启动协程！
+        // 因为本脚本(MotherTreeTrigger)挂载了 DayNightActiveToggle，切换到黑夜瞬间会被 disable
+        // 如果协程跑在这里，就会被腰斩，导致 Fader 卡住无法 FadeOut
+        yield return lightingSwitcher.StartCoroutine(lightingSwitcher.PerformWorldSwitch(true, true));
 
         // 3. Unlock input
         lightingSwitcher.SetInputBlocked(false);

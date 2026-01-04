@@ -542,7 +542,7 @@ public class RescueHandGaze : MonoBehaviour
                 input.move = Vector2.zero;
                 input.look = Vector2.zero;
                 input.jump = false;
-                input.sprint = false;
+                // input.sprint = false; <-- REMOVED: Allow sprint to persist if held
             }
         }
 
