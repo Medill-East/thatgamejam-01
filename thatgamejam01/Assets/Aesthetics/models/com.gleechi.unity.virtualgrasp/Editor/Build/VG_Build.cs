@@ -18,6 +18,7 @@ namespace VirtualGrasp
 
         // Checks if only ARM64 is enabled for build to cancel build for any
         // other unsupported platform.
+        /*
         class VerifyAndroidBuild : IPreprocessBuildWithReport
         {
             public int callbackOrder { get { return 1; } }
@@ -37,6 +38,7 @@ namespace VirtualGrasp
                 }
             }
         }
+        */
 
         static string[] GetBuildScenes()
         {
