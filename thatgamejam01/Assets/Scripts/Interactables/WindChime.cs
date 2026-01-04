@@ -23,6 +23,9 @@ public class WindChime : MonoBehaviour
     public GameObject[] windChimeHeads;
     public Material[] windChimeMaterials;
     public Animator chimeAnimator;
+
+    public GameObject[] objectsToReflectLight;
+    private Material[] objectsToReflectOriginalMaterials;
     
     private float _currentProgress = 0f;
     private bool _isComplete = false;
@@ -65,6 +68,17 @@ public class WindChime : MonoBehaviour
                     light.intensity = 0f;
                     light.gameObject.SetActive(true);
                 }
+            }
+        }
+
+        //record all materials when game starts
+        if (objectsToReflectLight != null)
+        {
+            objectsToReflectOriginalMaterials = new Material[objectsToReflectLight.Length];
+            for (int i = 0; i < objectsToReflectLight.Length; i++)
+            {
+                Debug.Log(objectsToReflectLight[i].GetComponent<MeshRenderer>().sharedMaterial);
+                objectsToReflectOriginalMaterials[i] = objectsToReflectLight[i].GetComponent<MeshRenderer>().sharedMaterial;
             }
         }
     }
@@ -176,6 +190,12 @@ public class WindChime : MonoBehaviour
         
         // Stop animation
         if (chimeAnimator != null) chimeAnimator.SetBool("IsActivated", false);
+        
+        // Apply ignorefog mat to objects to reflect light
+        foreach (var objectToReflectLight in objectsToReflectLight)
+        {
+            objectToReflectLight.GetComponent<MeshRenderer>().material = ignoreFogMaterial;
+        }
     }
 
     public void ResetWindChime()
@@ -202,6 +222,15 @@ public class WindChime : MonoBehaviour
             {
                  if (windChimeHeads[i] != null && i < windChimeMaterials.Length)
                     windChimeHeads[i].GetComponent<MeshRenderer>().material = windChimeMaterials[i];
+            }
+        }
+        
+        if (objectsToReflectLight != null)
+        {
+            for (int i = 0; i < objectsToReflectLight.Length; i++)
+            {
+                objectsToReflectLight[i].GetComponent<MeshRenderer>().material
+                    = objectsToReflectOriginalMaterials[i];
             }
         }
         
