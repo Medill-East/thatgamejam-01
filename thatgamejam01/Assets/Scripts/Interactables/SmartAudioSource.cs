@@ -16,6 +16,9 @@ public struct AudioProfile
 
     [Header("2. 朝向效果 (聚焦)")]
     public bool useDirectivity;
+
+    [Tooltip("角度衰减曲线：X轴(0~180)对应角度，Y轴(0~1)对应衰减系数")]
+    public AnimationCurve angleAttenuation;
     
     [Tooltip("无遮挡 + 正对声源时的频率 (清晰 25600Hz)")]
     public float facingFreq;
@@ -36,6 +39,7 @@ public struct AudioProfile
             occludedFacingFreq = 12000f,    // Day: Clearer through walls
             occludedBackingFreq = 8000f,    // Day: Clearer through walls
             useDirectivity = false,         // Day: Less directional focus
+            angleAttenuation = AnimationCurve.Linear(0, 1, 180, 0), // Default linear 0-180
             facingFreq = 22000f,
             backingFreq = 20000f,           // Day: Almost same as facing
             backingVolumeMultiplier = 0.8f  // Day: Minimal volume drop when turning away
@@ -50,6 +54,7 @@ public struct AudioProfile
             occludedFacingFreq = 6400f,
             occludedBackingFreq = 3200f,
             useDirectivity = true,          // Night: Strict directionality
+            angleAttenuation = AnimationCurve.Linear(0, 1, 180, 0), // Default linear 0-180
             facingFreq = 25600f,
             backingFreq = 12800f,
             backingVolumeMultiplier = 0.25f // Night: Big drop when turning away
@@ -153,7 +158,18 @@ public class SmartAudioSource : MonoBehaviour
             float angle = Vector3.Angle(targetCam.forward, toSource);
             
             float linearFactor = 1f - (angle / 180f); 
-            focusFactor = linearFactor; 
+            
+            // Allow curve to override if present
+            if (activeProfile.angleAttenuation != null && activeProfile.angleAttenuation.length > 0)
+            {
+                // Fix: Evaluate using raw angle (0-180) instead of normalized (0-1)
+                // This matches the Inspector's curve editor where X axis is degrees.
+                focusFactor = activeProfile.angleAttenuation.Evaluate(angle);
+            }
+            else
+            {
+                focusFactor = linearFactor; 
+            } 
         }
 
         // 3. 计算 "无遮挡情况" 下的目标值
