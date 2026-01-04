@@ -65,6 +65,7 @@ public class FallingTrigger : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             _lastTriggerTime = Time.time;
+            lightingSwitcher.canSwitchPerformWorldSwitch = false;
             StartCoroutine(FallRoutine(other.gameObject));
         }
     }
@@ -159,6 +160,7 @@ public class FallingTrigger : MonoBehaviour
                 
                 var input = player.GetComponent<StarterAssetsInputs>();
                 if (input != null) input.movementEnabled = true;
+                lightingSwitcher.canSwitchPerformWorldSwitch = true;
             }
             
             if (fader != null)
