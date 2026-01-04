@@ -38,6 +38,8 @@ public class LightingSwitcher : MonoBehaviour
 
     public WindChime[] windChimes;
 
+    public bool canSwitchPerformWorldSwitch = true;
+
     void Start()
     {
         if (mainCamera == null) mainCamera = Camera.main;
@@ -62,8 +64,11 @@ public class LightingSwitcher : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.JoystickButton4))
         {
-            StopAllCoroutines();
-            StartCoroutine(PerformWorldSwitch());
+            if (canSwitchPerformWorldSwitch)
+            {
+                StopAllCoroutines();
+                StartCoroutine(PerformWorldSwitch());
+            }
         }
     }
 

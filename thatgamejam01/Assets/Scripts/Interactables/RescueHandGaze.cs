@@ -68,6 +68,8 @@ public class RescueHandGaze : MonoBehaviour
     
     // Audio Isolation
     private List<AudioSource> _mutedSources = new List<AudioSource>();
+    
+    private LightingSwitcher lightingSwitcher;
 
     private void MuteOtherAudio()
     {
@@ -110,6 +112,8 @@ public class RescueHandGaze : MonoBehaviour
 
     private void OnEnable()
     {
+        lightingSwitcher = FindObjectOfType<LightingSwitcher>();
+        
         // Failsafe: If playerRef is missing (e.g. injection failed), try to find it
         if (playerRef == null)
         {
@@ -544,6 +548,8 @@ public class RescueHandGaze : MonoBehaviour
                 input.jump = false;
                 // input.sprint = false; <-- REMOVED: Allow sprint to persist if held
             }
+
+            lightingSwitcher.canSwitchPerformWorldSwitch = true;
         }
 
         // Play Success Sound (At respawn point, so player hears it)
