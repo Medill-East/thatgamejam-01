@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.5, z: 0}
-  m_LocalScale: {x: 10, y: 1, z: 10}
+  m_LocalScale: {x: 10, y: 1, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5992398766356945511}
@@ -161,7 +161,7 @@ Transform:
   m_GameObject: {fileID: 5194947377100611819}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.605, y: 2.663, z: 0}
+  m_LocalPosition: {x: -10.06, y: 2.663, z: -0.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -352,7 +352,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10, y: 0.86345, z: 10}
+  m_LocalScale: {x: 10, y: 0.86345, z: 25}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5992398766356945511}
@@ -486,43 +486,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 1.237
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.13
+      value: 0.962
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.78
+      value: -0.55
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7433492
+      value: 0.8677596
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.3222868
+      value: 0.3529864
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.58373916
+      value: 0.34979084
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.05302783
+      value: -0.006344637
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 32.755
+      value: 38.101
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 82.432
+      value: 49.974
       objectReference: {fileID: 0}
     - target: {fileID: 4228387201022426445, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 20.711
+      value: 17.447
       objectReference: {fileID: 0}
     - target: {fileID: 7532018223272214327, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_Name
@@ -598,7 +598,7 @@ MonoBehaviour:
   lullabySource: {fileID: 1530179015521622789}
   whiteFlashCanvasPrefab: {fileID: 6223599391975070996, guid: 2705b24e1f6c1454697303aacbed6fb6, type: 3}
   rescueSuccessSound: {fileID: 8300000, guid: ea990ad4fac7d984b8a38eefe8c40f75, type: 3}
-  maxGazeAngle: 20
+  maxGazeAngle: 15
   rescueDuration: 5.07
   maxFailureTime: 999
   minLightIntensity: 0.01
@@ -613,11 +613,11 @@ MonoBehaviour:
   wtsRef: {fileID: 0}
   fakeHandPrefab: {fileID: 0}
   maxDistance: 3
-  successDistance: 0.13
-  fadeStartDist: 2
-  handMoveSpeed: 0.5
+  successDistance: 0.05
+  fadeStartDist: 1
+  handMoveSpeed: 0.3
   handReturnSpeed: 0.2
-  playerHandTriggerDistance: 2
+  playerHandTriggerDistance: 1.5
 --- !u!1001 &7021413028573989478
 PrefabInstance:
   m_ObjectHideFlags: 0

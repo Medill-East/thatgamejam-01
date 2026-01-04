@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using StarterAssets;
@@ -64,6 +65,37 @@ public class RescueHandGaze : MonoBehaviour
     public float playerHandTriggerDistance = 1.2f; // Distance at which player hand starts reaching
 
     private string _lastRayHitName = ""; // Debug
+    
+    // Audio Isolation
+    private List<AudioSource> _mutedSources = new List<AudioSource>();
+
+    private void MuteOtherAudio()
+    {
+        _mutedSources.Clear();
+        AudioSource[] allSources = FindObjectsOfType<AudioSource>();
+        foreach (var source in allSources)
+        {
+            // Skip our Lullaby
+            if (source == lullabySource) continue;
+            // Skip our Success Sound (if it were an audio source on this object, though usually it's ClipAtPoint)
+            if (source.gameObject == gameObject) continue; 
+            
+            if (!source.mute)
+            {
+                source.mute = true;
+                _mutedSources.Add(source);
+            }
+        }
+    }
+
+    private void RestoreAudio()
+    {
+        foreach (var source in _mutedSources)
+        {
+            if (source != null) source.mute = false;
+        }
+        _mutedSources.Clear();
+    }
 
     private void OnEnable()
     {
@@ -166,10 +198,14 @@ public class RescueHandGaze : MonoBehaviour
             // but we usually want it at local zero. Let's just parenting.
             handVisualRoot.SetParent(transform, true); 
         }
+
+        MuteOtherAudio();
     }
 
     private void OnDisable()
     {
+        RestoreAudio();
+
         // Restore WallTouchSystem
         if (wtsRef != null) wtsRef.enabled = true;
         
@@ -191,7 +227,7 @@ public class RescueHandGaze : MonoBehaviour
 
     private ScreenFader _faderInstance;
 
-    private void Update()
+    private void LateUpdate() // 【修改】改为 LateUpdate 以确保在相机移动完成后才计算
     {
         if (_isRescued || _isGameOver) return;
         
@@ -218,26 +254,38 @@ public class RescueHandGaze : MonoBehaviour
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null && !rb.isKinematic) rb.isKinematic = true;
 
-        // 1. Calculate Gaze alignment
+        // 1. Determine "Eye Position" (Robust Method)
+        // If Camera is lagging (Cinemachine), we use the Player's physical position + height offset.
+        Vector3 eyePos;
+        Vector3 lookDir;
+        
         Camera mainCam = null;
-        
-        // Priority 1: Manual Override
         if (playerCameraOverride != null) mainCam = playerCameraOverride.GetComponent<Camera>(); 
-        
-        // Priority 2: Find in PlayerRef (Most robust for FPS)
         if (mainCam == null && playerRef != null) mainCam = playerRef.GetComponentInChildren<Camera>();
-
-        // Priority 3: Camera.main
         if (mainCam == null) mainCam = Camera.main;
 
-        if (mainCam == null) return;
-
-        // Debug: Show where we think the camera is
-        Debug.DrawLine(mainCam.transform.position, mainCam.transform.position + Vector3.up, Color.magenta); // Marker for camera
-
+        if (playerRef != null)
+        {
+            // Assume Average Eye Height ~ 1.6m
+            eyePos = playerRef.transform.position + Vector3.up * 1.6f;
+            
+            // For rotation, we still trust the camera's forward or the player's forward?
+            // If Camera is lagging position, it might lag rotation too. 
+            // BUT, usually FPC rotates the camera instantaneously.
+            if (mainCam != null) lookDir = mainCam.transform.forward;
+            else lookDir = playerRef.transform.forward;
+        }
+        else if (mainCam != null)
+        {
+            eyePos = mainCam.transform.position;
+            lookDir = mainCam.transform.forward;
+        }
+        else
+        {
+            return;
+        }
 
         // 【修改】优先使用手动指定的 gazeTargetOverride，如果没有则使用 transform.position
-        // 移除 Bounds 计算，防止粒子系统等巨大包围盒导致中心点偏离
         Vector3 rawTargetPos = transform.position;
         if (gazeTargetOverride != null)
         {
@@ -246,54 +294,47 @@ public class RescueHandGaze : MonoBehaviour
 
         // Simple smoothing
         _smoothedTargetPos = Vector3.Lerp(_smoothedTargetPos, rawTargetPos, Time.deltaTime * 10f);
-        // Init if far off
         if (Vector3.Distance(_smoothedTargetPos, rawTargetPos) > 2.0f) _smoothedTargetPos = rawTargetPos;
 
-        Vector3 toHand = (_smoothedTargetPos - mainCam.transform.position).normalized;
-        Vector3 playerLook = mainCam.transform.forward;
+        // Calculate based on Robust Eye Pos
+        Vector3 toHand = (_smoothedTargetPos - eyePos).normalized;
+        
+        // Debug
+        // Debug.DrawRay(eyePos, lookDir * 5f, Color.yellow);
+        // Debug.DrawLine(eyePos, _smoothedTargetPos, Color.cyan);
 
-        // Debug: Visualize Player Look Direction (Yellow)
-        Debug.DrawRay(mainCam.transform.position, playerLook * 5f, Color.yellow);
+        float angle = Vector3.Angle(lookDir, toHand);
 
-
-        float angle = Vector3.Angle(playerLook, toHand);
-
-        // Debug: Draw line to smoothed center (CYAN to confirm update)
-        Debug.DrawLine(mainCam.transform.position, _smoothedTargetPos, Color.cyan);
-
-        // 2. Determine "Looking At" status with Hysteresis (Stickiness)
-        // If we were looking, give 50% more leeway to keep looking (prevents flicker at edge)
+        // 2. Determine "Looking At" status
         float activeThreshold = _wasLooking ? (maxGazeAngle * 1.5f) : maxGazeAngle;
         bool isLooking = angle < activeThreshold;
         
-        _wasLooking = isLooking; // Store for next frame
-
-        // 【改进】Raycast 依然保留，作为辅助
-        // Important: Ignore Triggers to prevent hitting the FallingTrigger or other zones we are inside!
-        Ray ray = new Ray(mainCam.transform.position, mainCam.transform.forward);
-        string debugRayHitObj = "None"; // Debug var
+        // Raycast Check (Backup) using EyePos
+        string debugRayHitObj = "None"; 
+        Ray ray = new Ray(eyePos, lookDir);
         if (Physics.Raycast(ray, out RaycastHit hit, maxDistance * 1.5f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             debugRayHitObj = hit.collider.name;
-             // 只要打中了我或者我的子物体
             if (hit.transform == transform || hit.transform.IsChildOf(transform))
             {
                 isLooking = true;
             }
         }
-        _lastRayHitName = debugRayHitObj; // Store for GUI
+        _lastRayHitName = debugRayHitObj;
+        
+        _wasLooking = isLooking;
         
         // 3. Distance & Movement Logic
         float currentDist = maxDistance; // Default if no hand
         
         // Calculate raw distance first for logic checks
-        Vector3 targetPoint = (playerHandRef != null) ? playerHandRef.position : mainCam.transform.position;
-        float rawDistanceToCam = Vector3.Distance(handVisualRoot.position, mainCam.transform.position);
+        Vector3 targetPoint = (playerHandRef != null) ? playerHandRef.position : eyePos;
+        float rawDistanceToCam = Vector3.Distance(transform.position, eyePos);
 
         if (isLooking)
         {
-             // Move Rescue Hand towards Camera
-             Vector3 dirToCam = (mainCam.transform.position - transform.position).normalized;
+             // Move Rescue Hand towards Camera (EyePos)
+             Vector3 dirToCam = (eyePos - transform.position).normalized;
              transform.position += dirToCam * handMoveSpeed * Time.deltaTime;
              
              // Move Player Hand towards Rescue Hand (World Space Direction)
@@ -301,7 +342,7 @@ public class RescueHandGaze : MonoBehaviour
              if (playerHandRef != null && rawDistanceToCam < playerHandTriggerDistance)
              {
                  // 1. 旋转手掌朝向目标
-                 Vector3 directionToTarget = (handVisualRoot.position - playerHandRef.position).normalized;
+                 Vector3 directionToTarget = (_smoothedTargetPos - playerHandRef.position).normalized;
                  if (directionToTarget != Vector3.zero)
                  {
                      Quaternion baseLookRot = Quaternion.LookRotation(directionToTarget, Vector3.up);
@@ -489,6 +530,7 @@ public class RescueHandGaze : MonoBehaviour
         gameObject.SetActive(false); 
     }
 
+    /*
     private void OnGUI()
     {
         // Debug Display
@@ -543,4 +585,5 @@ public class RescueHandGaze : MonoBehaviour
         
         GUILayout.EndArea();
     }
+    */
 }

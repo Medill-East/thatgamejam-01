@@ -37993,6 +37993,7 @@ MonoBehaviour:
   presentText: "20 \u5E74\u540E"
   darkFogDensity: 0.9
   darkFogColor: {r: 0, g: 0, b: 0, a: 1}
+  inputBlocked: 0
 --- !u!1001 &3896921088030275695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38239,7 +38240,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4916725869996291691, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -28.5
       objectReference: {fileID: 0}
     - target: {fileID: 4916725869996291691, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
       propertyPath: m_LocalPosition.y
@@ -38247,7 +38248,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4916725869996291691, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -38.4
       objectReference: {fileID: 0}
     - target: {fileID: 4916725869996291691, guid: 1cd2548ef990f314c9558032e0d09013, type: 3}
       propertyPath: m_LocalRotation.w
