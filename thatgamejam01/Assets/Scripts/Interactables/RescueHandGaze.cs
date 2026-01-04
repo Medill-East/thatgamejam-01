@@ -25,6 +25,9 @@ public class RescueHandGaze : MonoBehaviour
     public float maxVolume = 1.0f;
     public float maxHandExtension = 0.8f; // 【新增】手臂最大伸出距离 (米)
     public Vector3 reachingRotationOffset = Vector3.zero; // 【新增】伸出手时的旋转修正
+    
+    [Tooltip("救助时的低通滤波频率 (越低越闷, 默认22000为不闷)")]
+    public float muffledCutoffFreq = 22000f; // Default open
 
     // Runtime Data injected by FallingTrigger
     [HideInInspector] public GameObject playerRef;
@@ -158,8 +161,9 @@ public class RescueHandGaze : MonoBehaviour
             if (smartAudio != null) smartAudio.enabled = false;
             
             // 重要修复：重置 LowPassFilter，防止之前的遮挡效果残留导致声音发闷
+            // 现在使用 muffledCutoffFreq 参数来控制
             var lpf = lullabySource.GetComponent<AudioLowPassFilter>();
-            if (lpf != null) lpf.cutoffFrequency = 22000f; // Fully open
+            if (lpf != null) lpf.cutoffFrequency = muffledCutoffFreq; 
 
             lullabySource.volume = minVolume;
             lullabySource.Play();

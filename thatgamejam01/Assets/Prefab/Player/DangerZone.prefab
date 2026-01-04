@@ -398,10 +398,10 @@ MonoBehaviour:
   fakeHandPrefab: {fileID: 1000010184414672, guid: 0aee8f5445cf45644af2e51bcf147e89, type: 3}
   optimalViewingPoint: {fileID: 5916093145112720213}
   timeBeforeGasp: 0.1
-  timeAfterGasp: 0.1
-  timeAfterSplash: 2
-  gaspSound: {fileID: 8300000, guid: 0a8649f9f460b2540969ef6f8bf51e68, type: 3}
-  splashSound: {fileID: 8300000, guid: 7f5b1f76d0c380549a767231ee0f7db6, type: 3}
+  timeAfterGasp: 3
+  timeAfterSplash: 0.2
+  gaspSound: {fileID: 8300000, guid: 09bd42a2478d39644b1ba2437919421d, type: 3}
+  splashSound: {fileID: 0}
   respawnPoint: {fileID: 5159994533204330142}
   playerRightHand: {fileID: 0}
   lightingSwitcher: {fileID: 0}
@@ -524,6 +524,78 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 17.447
       objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: dayProfile.facingFreq
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: dayProfile.backingFreq
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.facingFreq
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.backingFreq
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: dayProfile.occludedFacingFreq
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: dayProfile.occludedBackingFreq
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.occludedFacingFreq
+      value: 320
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.occludedBackingFreq
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[1].time
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[0].inSlope
+      value: -0.0055555557
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[1].inSlope
+      value: -0.0055555557
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[0].outSlope
+      value: -0.0055555557
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[1].outSlope
+      value: -0.0055555557
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[0].outWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 4672168466164385642, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: nightProfile.angleAttenuation.m_Curve.Array.data[1].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 5780738085480275746, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
+      propertyPath: lowpassLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 0.014097317
+      objectReference: {fileID: 0}
     - target: {fileID: 7532018223272214327, guid: 9a6b4fcd0f115354b805279dabc7b425, type: 3}
       propertyPath: m_Name
       value: RescueHand
@@ -597,7 +669,7 @@ MonoBehaviour:
   handLight: {fileID: 6702296851392581390}
   lullabySource: {fileID: 1530179015521622789}
   whiteFlashCanvasPrefab: {fileID: 6223599391975070996, guid: 2705b24e1f6c1454697303aacbed6fb6, type: 3}
-  rescueSuccessSound: {fileID: 8300000, guid: ea990ad4fac7d984b8a38eefe8c40f75, type: 3}
+  rescueSuccessSound: {fileID: 8300000, guid: e025d59bc05e36a4b9c2ed9163299683, type: 3}
   maxGazeAngle: 15
   rescueDuration: 5.07
   maxFailureTime: 999
@@ -607,6 +679,7 @@ MonoBehaviour:
   maxVolume: 1
   maxHandExtension: 1.3
   reachingRotationOffset: {x: -30, y: -30, z: 90}
+  muffledCutoffFreq: 320
   playerRef: {fileID: 0}
   respawnPointRef: {fileID: 0}
   playerHandRef: {fileID: 0}
