@@ -36,6 +36,8 @@ public class LightingSwitcher : MonoBehaviour
     public float darkFogDensity = 0.5f;
     public Color darkFogColor = Color.black;
 
+    public WindChime[] windChimes;
+
     void Start()
     {
         if (mainCamera == null) mainCamera = Camera.main;
@@ -49,6 +51,8 @@ public class LightingSwitcher : MonoBehaviour
         if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f;
         if (yearHintText != null) SetYearTextAlpha(0);
 
+        windChimes = FindObjectsOfType<WindChime>(); 
+        
         ApplyLighting();
     }
 
@@ -91,6 +95,11 @@ public class LightingSwitcher : MonoBehaviour
 
         ApplyLighting();
 
+        foreach (var windchime in windChimes)
+        {
+            windchime.ResetWindChime();
+        }
+        
         yield return new WaitForSeconds(0.5f);
 
         elapsed = 0;
