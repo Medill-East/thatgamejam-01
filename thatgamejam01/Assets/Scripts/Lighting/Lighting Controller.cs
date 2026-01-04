@@ -139,13 +139,13 @@ public class LightingSwitcher : MonoBehaviour
         if (cc != null) cc.enabled = true;
     }
 
+    public event System.Action<bool> OnDayNightChange; // Event for other scripts
+
     void ApplyLighting()
     {
         // --- 新增：控制水特效显示 ---
         if (waterVFX != null)
         {
-            // 如果 isDark 为 false（白天），则 SetActive(true)
-            // 如果 isDark 为 true（黑暗），则 SetActive(false)
             waterVFX.SetActive(!isDark);
         }
 
@@ -174,6 +174,9 @@ public class LightingSwitcher : MonoBehaviour
             RenderSettings.fog = false;
         }
         DynamicGI.UpdateEnvironment();
+        
+        // Notify listeners
+        OnDayNightChange?.Invoke(isDark);
     }
 
     // --- New Methods for Game Flow ---

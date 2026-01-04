@@ -15,6 +15,7 @@ TagManager:
   - Rock
   - RightHand
   - Start
+  - Mom
   layers:
   - Default
   - TransparentFX
