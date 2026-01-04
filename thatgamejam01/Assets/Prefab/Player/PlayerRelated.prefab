@@ -1016,6 +1016,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   reachDistance: 1
+  detectionRadius: 0.1
   shoulderOffset: {x: 0.2, y: -0.2, z: 0}
   surfaceOffset: 0.05
   rotationOffset: {x: 0, y: 0, z: 0}
@@ -1023,6 +1024,7 @@ MonoBehaviour:
   rotationSpeed: 15
   restingLocalPosition: {x: 0.2, y: -0.2, z: 0.4}
   restingLocalRotation: {x: 0, y: 0, z: 0}
+  lightingSwitcher: {fileID: 0}
 --- !u!114 &1118063197742109605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1510,7 +1512,7 @@ MonoBehaviour:
   bobHeight: 0.05
   bobSway: 0.05
   stepStride: 0.3
-  footLift: 0.1
+  footLift: 1
 --- !u!82 &3732205129000770115
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1770,6 +1772,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   reachDistance: 1
+  detectionRadius: 0.1
   shoulderOffset: {x: 0.2, y: -0.2, z: 0}
   surfaceOffset: 0.05
   rotationOffset: {x: 0, y: 0, z: 0}
@@ -1777,6 +1780,7 @@ MonoBehaviour:
   rotationSpeed: 15
   restingLocalPosition: {x: 0.2, y: -0.2, z: 0.4}
   restingLocalRotation: {x: 0, y: 0, z: 0}
+  lightingSwitcher: {fileID: 0}
 --- !u!114 &4659825658702656712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2405,6 +2409,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   reachDistance: 3
+  detectionRadius: 0.1
   shoulderOffset: {x: 0.2, y: -0.2, z: 0}
   surfaceOffset: 0
   rotationOffset: {x: -45, y: 30, z: -90}
@@ -2412,6 +2417,7 @@ MonoBehaviour:
   rotationSpeed: 15
   restingLocalPosition: {x: -0.3, y: 1, z: 0}
   restingLocalRotation: {x: 0, y: 0, z: 0}
+  lightingSwitcher: {fileID: 0}
 --- !u!114 &8387028429421658047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2651,6 +2657,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   reachDistance: 3
+  detectionRadius: 0.1
   shoulderOffset: {x: 0.2, y: -0.2, z: 0}
   surfaceOffset: 0
   rotationOffset: {x: -45, y: -30, z: 90}
@@ -2658,6 +2665,7 @@ MonoBehaviour:
   rotationSpeed: 15
   restingLocalPosition: {x: 0.3, y: 1, z: 0}
   restingLocalRotation: {x: 0, y: 0, z: 0}
+  lightingSwitcher: {fileID: 0}
 --- !u!114 &6818370345948037040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2828,6 +2836,10 @@ PrefabInstance:
     - target: {fileID: 633573568829839696, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3553827028197915268, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
+      propertyPath: footLift
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3553827028197915268, guid: baeccd9179f6c3843b7cdcde82a3cf80, type: 3}
       propertyPath: cameraTransform
