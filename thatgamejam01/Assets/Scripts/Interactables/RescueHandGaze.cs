@@ -51,7 +51,7 @@ public class RescueHandGaze : MonoBehaviour
     private bool _wasLooking = false;
     
     // Fake Hand State
-    private GameObject _realHandObject;
+    private Transform _originalPlayerHand; // Persistent ref to the REAL hand
     private GameObject _spawnedFakeHand;
     
     // Distance Params
@@ -73,15 +73,26 @@ public class RescueHandGaze : MonoBehaviour
     {
         _mutedSources.Clear();
         AudioSource[] allSources = FindObjectsOfType<AudioSource>();
+        Debug.Log($"[RescueHandGaze] Found {allSources.Length} AudioSources. LullabyRef: {(lullabySource != null ? lullabySource.name : "NULL")}");
+
         foreach (var source in allSources)
         {
             // Skip our Lullaby
-            if (source == lullabySource) continue;
+            if (source == lullabySource) 
+            {
+                Debug.Log($"[RescueHandGaze] SKIPPING Lullaby Source: {source.name}");
+                continue;
+            }
             // Skip our Success Sound (if it were an audio source on this object, though usually it's ClipAtPoint)
-            if (source.gameObject == gameObject) continue; 
+            if (source.gameObject == gameObject) 
+            {
+                Debug.Log($"[RescueHandGaze] SKIPPING Self Source: {source.name}");
+                continue;
+            }
             
             if (!source.mute)
             {
+                // Debug.Log($"[RescueHandGaze] Muting: {source.name} on {source.gameObject.name}");
                 source.mute = true;
                 _mutedSources.Add(source);
             }
@@ -99,24 +110,35 @@ public class RescueHandGaze : MonoBehaviour
 
     private void OnEnable()
     {
+        // Failsafe: If playerRef is missing (e.g. injection failed), try to find it
+        if (playerRef == null)
+        {
+            playerRef = GameObject.FindGameObjectWithTag("Player");
+            if (playerRef == null)
+            {
+                // Try finding by generic type (assuming single player)
+                var fp = FindObjectOfType<FirstPersonController>();
+                if (fp != null) playerRef = fp.gameObject;
+            }
+            if (playerRef != null) Debug.Log("[RescueHandGaze] Auto-found PlayerRef.");
+        }
+
         Debug.Log($"[RescueHandGaze] OnEnable. PlayerRef is assigned: {(playerRef != null)}");
 
         // Disable WallTouchSystem to prevent conflict
         if (wtsRef != null) wtsRef.enabled = false;
         
-        // 【新增】确保视觉部分被重新启用 (因为我们在 SuccessSequence 里关闭了它)
+        // Ensure visuals are active
         if (handVisualRoot != null)
         {
             handVisualRoot.gameObject.SetActive(true);
-            // 额外修复：如果之前是通过禁用 component 隐藏的，现在要恢复
             foreach(var r in handVisualRoot.GetComponentsInChildren<Renderer>(true)) 
             {
                 r.enabled = true;
             }
         }
 
-        // Reset State on Enable
-
+        // Reset State
         _timeSinceSpawn = 0f;
         _isRescued = false;
         _isGameOver = false;
@@ -125,13 +147,20 @@ public class RescueHandGaze : MonoBehaviour
         // Default Light Init
         if (handLight != null)
         {
-            handLight.enabled = true; // Ensure component is on
-
+            handLight.enabled = true; 
             handLight.intensity = minLightIntensity;
         }
 
         if (lullabySource != null)
         {
+            // Disable SmartAudioSource to allow manual volume control during rescue
+            var smartAudio = lullabySource.GetComponent<SmartAudioSource>();
+            if (smartAudio != null) smartAudio.enabled = false;
+            
+            // 重要修复：重置 LowPassFilter，防止之前的遮挡效果残留导致声音发闷
+            var lpf = lullabySource.GetComponent<AudioLowPassFilter>();
+            if (lpf != null) lpf.cutoffFrequency = 22000f; // Fully open
+
             lullabySource.volume = minVolume;
             lullabySource.Play();
         }
@@ -139,33 +168,43 @@ public class RescueHandGaze : MonoBehaviour
         // Store initial positions for reset
         _initialHandPos = transform.position;
 
+        // --- Fake Hand Logic Refined ---
         if (playerHandRef != null)
         {
-            // --- Fake Hand Logic ---
+            // CAUTION: If playerHandRef is ALREADY the fake hand (due to some weird state), we must find the real one.
+            // But we can't easily distinguish unless we check if it is _spawnedFakeHand.
+            // If _originalPlayerHand is known, use it.
+            if (_originalPlayerHand != null)
+            {
+                playerHandRef = _originalPlayerHand;
+                playerHandRef.gameObject.SetActive(true);
+            }
+            else
+            {
+                // First run: Cache it
+                _originalPlayerHand = playerHandRef;
+                _initialPlayerHandLocalPos = playerHandRef.localPosition;
+                _initialPlayerHandLocalRot = playerHandRef.localRotation;
+            }
+
             if (fakeHandPrefab != null)
             {
-                // 1. 记录真手
-                _realHandObject = playerHandRef.gameObject;
+                // 1. Create Fake Hand
+                if (_spawnedFakeHand != null) Destroy(_spawnedFakeHand); 
                 
-                // 2. 生成假手 (作为真手的兄弟节点，或者父节点的子节点)
                 _spawnedFakeHand = Instantiate(fakeHandPrefab, playerHandRef.parent);
                 
-                // 3. 对齐位置旋转
+                // 2. Align
                 _spawnedFakeHand.transform.localPosition = playerHandRef.localPosition;
                 _spawnedFakeHand.transform.localRotation = playerHandRef.localRotation;
                 _spawnedFakeHand.transform.localScale = playerHandRef.localScale;
                 
-                // 4. 隐藏真手
-                _realHandObject.SetActive(false);
-                
-                // 5. 将 logic reference 指向假手，这样后续动画代码就会驱动假手
-                playerHandRef = _spawnedFakeHand.transform;
+                // 3. Hide Real, Use Fake
+                playerHandRef.gameObject.SetActive(false);
+                playerHandRef = _spawnedFakeHand.transform; 
                 
                 Debug.Log("[RescueHandGaze] Swapped to Fake Hand.");
             }
-            
-            _initialPlayerHandLocalPos = playerHandRef.localPosition;
-            _initialPlayerHandLocalRot = playerHandRef.localRotation;
         }
 
         // Instantiate/Get Fader for this session
@@ -177,7 +216,7 @@ public class RescueHandGaze : MonoBehaviour
 
         if (_faderInstance != null)
         {
-            _faderInstance.SetAlpha(0f); // Start invisible
+            _faderInstance.SetAlpha(0f); 
         }
 
         // Auto-assign Camera Override if missing
@@ -190,12 +229,9 @@ public class RescueHandGaze : MonoBehaviour
             }
         }
 
-        // Hierarchy Check: Ensure visuals move with us
+        // Hierarchy Check
         if (handVisualRoot != null && !handVisualRoot.IsChildOf(transform))
         {
-            Debug.LogWarning($"[RescueHandGaze] handVisualRoot '{handVisualRoot.name}' is NOT a child of '{name}'. Reparenting strictly to ensure movement works.");
-            // Record world position before reparenting to keep it in place visually if that was intended, 
-            // but we usually want it at local zero. Let's just parenting.
             handVisualRoot.SetParent(transform, true); 
         }
 
@@ -209,12 +245,11 @@ public class RescueHandGaze : MonoBehaviour
         // Restore WallTouchSystem
         if (wtsRef != null) wtsRef.enabled = true;
         
-        // Restore Real Hand
-        if (_realHandObject != null)
+        // Restore Real Hand Logic
+        if (_originalPlayerHand != null)
         {
-            _realHandObject.SetActive(true);
-            playerHandRef = _realHandObject.transform; // Reset ref back to real hand just in case
-            _realHandObject = null;
+            _originalPlayerHand.gameObject.SetActive(true);
+            playerHandRef = _originalPlayerHand; // Reset public ref back to real
         }
         
         // Destroy Fake Hand
@@ -482,13 +517,21 @@ public class RescueHandGaze : MonoBehaviour
         // 3. Teleport
         if (playerRef != null && respawnPointRef != null)
         {
-            CharacterController cc = playerRef.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
-            
-            playerRef.transform.position = respawnPointRef.position;
-            // playerRef.transform.rotation = respawnPointRef.rotation; // Keep rotation logic if needed, or remove if user prefers looking somewhere else
-
-            if (cc != null) cc.enabled = true;
+            var fpsController = playerRef.GetComponent<FirstPersonController>();
+            if (fpsController != null)
+            {
+                // Use the robust method to set Pos + Rotation (Pitch & Yaw)
+                fpsController.ForceSetPositionAndRotation(respawnPointRef);
+            }
+            else
+            {
+                // Fallback for non-FPC player
+                CharacterController cc = playerRef.GetComponent<CharacterController>();
+                if (cc != null) cc.enabled = false;
+                playerRef.transform.position = respawnPointRef.position;
+                playerRef.transform.rotation = respawnPointRef.rotation;
+                if (cc != null) cc.enabled = true;
+            }
 
             // Re-enable inputs
             var input = playerRef.GetComponent<StarterAssetsInputs>();
