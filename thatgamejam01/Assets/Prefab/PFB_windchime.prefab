@@ -16113,7 +16113,7 @@ MonoBehaviour:
     backingFreq: 12800
     backingVolumeMultiplier: 0.25
   smoothSpeed: 10
-  externalVolumeMult: 1
+  externalVolumeMult: -100
 --- !u!169 &6187460991143445193
 AudioLowPassFilter:
   m_ObjectHideFlags: 0
@@ -16329,6 +16329,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 93.478
       objectReference: {fileID: 0}
+    - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
+      propertyPath: audioObj
+      value: 
+      objectReference: {fileID: 7695939920997732112}
     - target: {fileID: 2340814776728387479, guid: 46b1261fd9646e44a9677ffb227e6fe5, type: 3}
       propertyPath: chimeAnimator
       value: 

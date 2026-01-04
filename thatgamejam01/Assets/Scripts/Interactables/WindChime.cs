@@ -28,6 +28,7 @@ public class WindChime : MonoBehaviour
     private bool _isComplete = false;
     private LightingSwitcher _lightSwitcher;
     private bool _isPlayerInZone = false;
+    public GameObject audioObj;
 
     // Start is called before the first frame update
     void Start()
@@ -48,14 +49,10 @@ public class WindChime : MonoBehaviour
         }
 
         // Safety check for parent hierarchy structure logic from original code
-        if (transform.parent != null && transform.parent.childCount > 0)
+        if(audioObj != null) 
         {
-            var audioObj = transform.parent.GetChild(0).gameObject;
-            if(audioObj != null) 
-            {
-                smartAudioSource = audioObj.GetComponent<SmartAudioSource>();
-                audioSource = audioObj.GetComponent<AudioSource>();
-            }
+            smartAudioSource = audioObj.GetComponent<SmartAudioSource>();
+            audioSource = audioObj.GetComponent<AudioSource>();
         }
 
         // Initialize Lights
