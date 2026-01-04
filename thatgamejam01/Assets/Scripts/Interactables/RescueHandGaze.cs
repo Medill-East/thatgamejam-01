@@ -6,6 +6,8 @@ using StarterAssets;
 public class RescueHandGaze : MonoBehaviour
 {
     [Header("Dependencies")]
+    public Transform playerCameraOverride; // 【新增】强制指定玩家摄像机 (解决 Camera.main 找错的问题)
+    public Transform gazeTargetOverride; // 【新增】手动指定看向的目标点 (如果不指定则默认为物体根节点)
     public Transform handVisualRoot; // The visual part of the hand
     public Light handLight;
     public AudioSource lullabySource;
@@ -43,6 +45,10 @@ public class RescueHandGaze : MonoBehaviour
     private Vector3 _initialPlayerHandLocalPos;
     private Quaternion _initialPlayerHandLocalRot;
     
+    // Smoothing & Hysteresis
+    private Vector3 _smoothedTargetPos;
+    private bool _wasLooking = false;
+    
     // Fake Hand State
     private GameObject _realHandObject;
     private GameObject _spawnedFakeHand;
@@ -56,6 +62,8 @@ public class RescueHandGaze : MonoBehaviour
     public float handMoveSpeed = 2.5f; // Increased from 1.0f
     public float handReturnSpeed = 2.0f;
     public float playerHandTriggerDistance = 1.2f; // Distance at which player hand starts reaching
+
+    private string _lastRayHitName = ""; // Debug
 
     private void OnEnable()
     {
@@ -139,6 +147,25 @@ public class RescueHandGaze : MonoBehaviour
         {
             _faderInstance.SetAlpha(0f); // Start invisible
         }
+
+        // Auto-assign Camera Override if missing
+        if (playerCameraOverride == null)
+        {
+            GameObject camObj = GameObject.FindGameObjectWithTag("MainCamera");
+            if (camObj != null)
+            {
+                playerCameraOverride = camObj.transform;
+            }
+        }
+
+        // Hierarchy Check: Ensure visuals move with us
+        if (handVisualRoot != null && !handVisualRoot.IsChildOf(transform))
+        {
+            Debug.LogWarning($"[RescueHandGaze] handVisualRoot '{handVisualRoot.name}' is NOT a child of '{name}'. Reparenting strictly to ensure movement works.");
+            // Record world position before reparenting to keep it in place visually if that was intended, 
+            // but we usually want it at local zero. Let's just parenting.
+            handVisualRoot.SetParent(transform, true); 
+        }
     }
 
     private void OnDisable()
@@ -187,21 +214,74 @@ public class RescueHandGaze : MonoBehaviour
 
     private void HandleGazeLogic()
     {
+        // 0. Ensure Physics doesn't fight us
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null && !rb.isKinematic) rb.isKinematic = true;
+
         // 1. Calculate Gaze alignment
-        Camera mainCam = Camera.main;
-        if (mainCam == null) 
+        Camera mainCam = null;
+        
+        // Priority 1: Manual Override
+        if (playerCameraOverride != null) mainCam = playerCameraOverride.GetComponent<Camera>(); 
+        
+        // Priority 2: Find in PlayerRef (Most robust for FPS)
+        if (mainCam == null && playerRef != null) mainCam = playerRef.GetComponentInChildren<Camera>();
+
+        // Priority 3: Camera.main
+        if (mainCam == null) mainCam = Camera.main;
+
+        if (mainCam == null) return;
+
+        // Debug: Show where we think the camera is
+        Debug.DrawLine(mainCam.transform.position, mainCam.transform.position + Vector3.up, Color.magenta); // Marker for camera
+
+
+        // 【修改】优先使用手动指定的 gazeTargetOverride，如果没有则使用 transform.position
+        // 移除 Bounds 计算，防止粒子系统等巨大包围盒导致中心点偏离
+        Vector3 rawTargetPos = transform.position;
+        if (gazeTargetOverride != null)
         {
-            Debug.LogError("[RescueHandGaze] Camera.main is NULL!");
-            return;
+            rawTargetPos = gazeTargetOverride.position;
         }
 
-        Vector3 toHand = (handVisualRoot.position - mainCam.transform.position).normalized;
+        // Simple smoothing
+        _smoothedTargetPos = Vector3.Lerp(_smoothedTargetPos, rawTargetPos, Time.deltaTime * 10f);
+        // Init if far off
+        if (Vector3.Distance(_smoothedTargetPos, rawTargetPos) > 2.0f) _smoothedTargetPos = rawTargetPos;
+
+        Vector3 toHand = (_smoothedTargetPos - mainCam.transform.position).normalized;
         Vector3 playerLook = mainCam.transform.forward;
+
+        // Debug: Visualize Player Look Direction (Yellow)
+        Debug.DrawRay(mainCam.transform.position, playerLook * 5f, Color.yellow);
+
 
         float angle = Vector3.Angle(playerLook, toHand);
 
-        // 2. Determine "Looking At" status
-        bool isLooking = angle < maxGazeAngle;
+        // Debug: Draw line to smoothed center (CYAN to confirm update)
+        Debug.DrawLine(mainCam.transform.position, _smoothedTargetPos, Color.cyan);
+
+        // 2. Determine "Looking At" status with Hysteresis (Stickiness)
+        // If we were looking, give 50% more leeway to keep looking (prevents flicker at edge)
+        float activeThreshold = _wasLooking ? (maxGazeAngle * 1.5f) : maxGazeAngle;
+        bool isLooking = angle < activeThreshold;
+        
+        _wasLooking = isLooking; // Store for next frame
+
+        // 【改进】Raycast 依然保留，作为辅助
+        // Important: Ignore Triggers to prevent hitting the FallingTrigger or other zones we are inside!
+        Ray ray = new Ray(mainCam.transform.position, mainCam.transform.forward);
+        string debugRayHitObj = "None"; // Debug var
+        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance * 1.5f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            debugRayHitObj = hit.collider.name;
+             // 只要打中了我或者我的子物体
+            if (hit.transform == transform || hit.transform.IsChildOf(transform))
+            {
+                isLooking = true;
+            }
+        }
+        _lastRayHitName = debugRayHitObj; // Store for GUI
         
         // 3. Distance & Movement Logic
         float currentDist = maxDistance; // Default if no hand
@@ -407,5 +487,60 @@ public class RescueHandGaze : MonoBehaviour
         }
         
         gameObject.SetActive(false); 
+    }
+
+    private void OnGUI()
+    {
+        // Debug Display
+        if (_isRescued || _isGameOver) return;
+        if (playerRef == null) return;
+
+        GUILayout.BeginArea(new Rect(10, 10, 300, 150));
+        GUILayout.Label($"Rescue Hand Debug:");
+        
+        Camera mainCam = null;
+        if (playerCameraOverride != null) mainCam = playerCameraOverride.GetComponent<Camera>();
+        if (mainCam == null && playerRef != null) mainCam = playerRef.GetComponentInChildren<Camera>();
+        if (mainCam == null) mainCam = Camera.main;
+
+        if (mainCam != null)
+        {
+             GUILayout.Label($"Cam: {mainCam.name}");
+             Vector3 targetPos = transform.position;
+             Renderer[] renderers = GetComponentsInChildren<Renderer>();
+             if (renderers.Length > 0)
+             {
+                 Bounds combinedBounds = renderers[0].bounds;
+                 for (int i = 1; i < renderers.Length; i++) combinedBounds.Encapsulate(renderers[i].bounds);
+                 targetPos = combinedBounds.center;
+             }
+        
+             Vector3 toHand = (targetPos - mainCam.transform.position).normalized;
+             float angle = Vector3.Angle(mainCam.transform.forward, toHand);
+             GUILayout.Label($"Angle: {angle:F1} (Max: {maxGazeAngle})");
+             
+             // Recalc looking for display
+             bool isLooking = angle < maxGazeAngle;
+             // Raycast verify
+             Ray ray = new Ray(mainCam.transform.position, mainCam.transform.forward);
+             if (Physics.Raycast(ray, out RaycastHit hit, maxDistance * 1.5f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+             {
+                 if (hit.transform == transform || hit.transform.IsChildOf(transform)) 
+                     isLooking = true;
+             }
+             GUILayout.Label($"Is Looking: {isLooking}");
+             
+             GUILayout.Label($"Ray Hit: {_lastRayHitName}");
+             GUILayout.Label($"Target (Bounds): {targetPos}");
+             string state = isLooking ? "APPROACHING" : "RETURNING";
+             GUILayout.Label($"State: {state} (Speed: {handMoveSpeed})");
+
+
+             Vector3 targetPoint = (playerHandRef != null) ? playerHandRef.position : mainCam.transform.position;
+             float dist = Vector3.Distance(handVisualRoot.position, targetPoint);
+             GUILayout.Label($"Dist to Target: {dist:F2} (Success: {successDistance})");
+        }
+        
+        GUILayout.EndArea();
     }
 }

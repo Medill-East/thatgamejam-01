@@ -41,6 +41,15 @@ public class FallingTrigger : MonoBehaviour
     public LightingSwitcher lightingSwitcher;
     public GameObject whiteFlashCanvasPrefab;
 
+    private void Start()
+    {
+        if (lightingSwitcher == null)
+        {
+            lightingSwitcher = FindObjectOfType<LightingSwitcher>();
+            if (lightingSwitcher == null) Debug.LogError("[FallingTrigger] LightingSwitcher not found in scene!");
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         // 5秒防抖，防止短时间内重复触发，或者物理引擎的不稳定
@@ -190,9 +199,7 @@ public class FallingTrigger : MonoBehaviour
                         Debug.LogError("[FallingTrigger] Assigned Scene Object does NOT have RescueHandGaze component!");
                     }
             
-                    rescueHandSceneInstance.SetActive(true);
-            
-                    // 【新增】看向手，避免玩家一直看地板
+                    // 【修改】先传送玩家，再激活手，确保第一帧逻辑就是正确的
                     var fpsController = player.GetComponent<FirstPersonController>();
                     if (fpsController != null)
                     {
@@ -208,6 +215,8 @@ public class FallingTrigger : MonoBehaviour
                             fpsController.ForceLookAt(rescueHandSceneInstance.transform.position);
                         }
                     }
+
+                    rescueHandSceneInstance.SetActive(true);
             
                     Debug.Log("Player has fallen. Rescue Hand Activated.");
                 }
