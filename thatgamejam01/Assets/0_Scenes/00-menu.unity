@@ -320,8 +320,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 20 YEARS
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
+  m_sharedMaterial: {fileID: 2751340212957254715, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -578,7 +578,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &357232911
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1185,18 +1185,11 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '20 years ago
-
-
-    Mountain road so long
-
-    Chimes awake a gentle song
-
-    Child
-    chases the voice'
+  m_text: "20 years ago\n\n\u795E\u5C71\u796D\u8DEF\u9065\nMountain road so long\n\u98CE\u94C3\u60CA\u8D77\u6B4C\u8C23\u58F0\nChimes
+    awake a gentle song\n\u7A1A\u5B50\u9010\u97F3\u5BB9\nChild chases the voice"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
+  m_sharedMaterial: {fileID: 2751340212957254715, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1232,7 +1225,7 @@ MonoBehaviour:
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: 20
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -1329,8 +1322,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Exit
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
+  m_sharedMaterial: {fileID: 2751340212957254715, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3446,8 +3439,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Start
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
+  m_sharedMaterial: {fileID: 2751340212957254715, guid: 9b26f7a01a041514f91c1bc6c4ccbe7c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

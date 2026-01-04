@@ -226,4 +226,24 @@ public class LightingSwitcher : MonoBehaviour
         if (yearHintText != null) yearHintText.text = pastText;
         if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f; // Ensure fade is cleared
     }
+
+    // 【新增】专门用于 MotherTree 的剧情切换序列，确保输入在切换后解锁
+    // 将逻辑移到这里可以防止触发器物体被禁用导致协程中断
+    public void TriggerStorySequence(Vector3 respawnPos, Quaternion respawnRot)
+    {
+        StartCoroutine(StorySequenceRoutine(respawnPos, respawnRot));
+    }
+
+    private IEnumerator StorySequenceRoutine(Vector3 respawnPos, Quaternion respawnRot)
+    {
+        // 1. Set Respawn
+        SetRespawnPoint(respawnPos, respawnRot);
+
+        // 2. Perform Switch (Force Night, Force Teleport)
+        // We yield wait for it to finish
+        yield return StartCoroutine(PerformWorldSwitch(true, true));
+
+        // 3. Unlock Input - This is safe here because LightingSwitcher handles it
+        SetInputBlocked(false);
+    }
 }

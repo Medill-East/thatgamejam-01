@@ -552,7 +552,11 @@ public class RescueHandGaze : MonoBehaviour
                 input.jump = false;
                 // input.sprint = false; <-- REMOVED: Allow sprint to persist if held
             }
+        }
 
+        // Always restore ability to switch time on success
+        if (lightingSwitcher != null)
+        {
             lightingSwitcher.canSwitchPerformWorldSwitch = true;
         }
 

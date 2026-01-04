@@ -60,39 +60,28 @@ public class MotherTreeTrigger : MonoBehaviour
 
         if (lightingSwitcher != null)
         {
-            StartCoroutine(SequenceWrapper());
-        }
-        else
-        {
-            Debug.LogError("[MotherTreeTrigger] Cannot trigger sequence, LightingSwitcher is missing.");
-        }
-    }
+            // Find start pos
+            Vector3 targetPos = Vector3.zero;
+            Quaternion targetRot = Quaternion.identity;
+            
+            GameObject startObj = GameObject.FindGameObjectWithTag("Start");
+            if (startObj != null)
+            {
+                targetPos = startObj.transform.position;
+                targetRot = startObj.transform.rotation;
+            }
+            else
+            {
+                // Fallback to current player pos? Or just keep current respawn.
+                // Assuming Start exists is safer for logic coherence.
+                 Debug.LogWarning("[MotherTreeTrigger] Start tag not found.");
+            }
 
-    private IEnumerator SequenceWrapper()
-    {
-        // 1. Find correct "Start" point to enforce teleport destination
-        GameObject startObj = GameObject.FindGameObjectWithTag("Start");
-        if (startObj != null)
-        {
-            // Explicitly update the respawn point in the manager so the usage calls to default logic use THIS point.
-            lightingSwitcher.SetRespawnPoint(startObj.transform.position, startObj.transform.rotation);
+            // Hand off logic to Persistent Controller
+            lightingSwitcher.TriggerStorySequence(targetPos, targetRot);
+            
+            // Disable self immediately
+            gameObject.SetActive(false);
         }
-        else
-        {
-            Debug.LogWarning("[MotherTreeTrigger] Could not find object with tag 'Start'. LightingSwitcher will use default/current start position.");
-        }
-
-        // 2. Call the standard switch with Force Teleport enabled
-        // targetState = true (Dark), forceTeleport = true
-        // 【关键修复】必须在 LightingSwitcher 上启动协程！
-        // 因为本脚本(MotherTreeTrigger)挂载了 DayNightActiveToggle，切换到黑夜瞬间会被 disable
-        // 如果协程跑在这里，就会被腰斩，导致 Fader 卡住无法 FadeOut
-        yield return lightingSwitcher.StartCoroutine(lightingSwitcher.PerformWorldSwitch(true, true));
-
-        // 3. Unlock input
-        lightingSwitcher.SetInputBlocked(false);
-
-        // 4. Disable self
-        gameObject.SetActive(false);
     }
 }
