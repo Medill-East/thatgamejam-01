@@ -669,7 +669,7 @@ MonoBehaviour:
   handLight: {fileID: 6702296851392581390}
   lullabySource: {fileID: 1530179015521622789}
   whiteFlashCanvasPrefab: {fileID: 6223599391975070996, guid: 2705b24e1f6c1454697303aacbed6fb6, type: 3}
-  rescueSuccessSound: {fileID: 8300000, guid: e025d59bc05e36a4b9c2ed9163299683, type: 3}
+  rescueSuccessSound: {fileID: 8300000, guid: 81cc3f6cffa303d4eb56e08bc3c10c56, type: 3}
   maxGazeAngle: 15
   rescueDuration: 5.07
   maxFailureTime: 999
