@@ -27,9 +27,13 @@ public class LightingSwitcher : MonoBehaviour
     public TextMeshProUGUI yearHintText;
     public float fadeInTime = 0.2f;
     public float fadeOutTime = 0.4f;
+    [Tooltip("全黑状态下的停留时间")]
+    public float stayDuration = 0.5f; // 【新增】
 
     [Header("Year Messages")]
+    [TextArea(3, 10)]
     public string pastText = "20 年前";
+    [TextArea(3, 10)]
     public string presentText = "20 年后";
 
     [Header("Environment Fog")]
@@ -38,7 +42,11 @@ public class LightingSwitcher : MonoBehaviour
 
     public WindChime[] windChimes;
 
+    [Header("UI")]
+    public GameObject switchPromptUI; // 【新增】F键提示UI
+
     public bool canSwitchPerformWorldSwitch = true;
+    private bool _isSwitching = false; // 【新增】是否正在切换中
 
     void Start()
     {
@@ -60,11 +68,23 @@ public class LightingSwitcher : MonoBehaviour
 
     void Update()
     {
+        // UI Visibility Control
+        if (switchPromptUI != null)
+        {
+            // Show only if: Can Perform Switch AND Not Currently Switching AND Not Input Blocked
+            bool showPrompt = canSwitchPerformWorldSwitch && !_isSwitching && !inputBlocked;
+            if (switchPromptUI.activeSelf != showPrompt)
+            {
+                switchPromptUI.SetActive(showPrompt);
+            }
+        }
+
         if (inputBlocked) return;
 
         if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.JoystickButton4))
         {
-            if (canSwitchPerformWorldSwitch)
+            // Also check !isSwitching to prevent spamming F
+            if (canSwitchPerformWorldSwitch && !_isSwitching)
             {
                 StopAllCoroutines();
                 StartCoroutine(PerformWorldSwitch());
@@ -74,6 +94,8 @@ public class LightingSwitcher : MonoBehaviour
 
     public IEnumerator PerformWorldSwitch(bool? targetState = null, bool forceTeleport = false)
     {
+        _isSwitching = true; // Start Transition
+
         if (yearHintText != null)
             yearHintText.text = isDark ? pastText : presentText;
 
@@ -105,7 +127,8 @@ public class LightingSwitcher : MonoBehaviour
             windchime.ResetWindChime();
         }
         
-        yield return new WaitForSeconds(0.5f);
+        // Use exposed parameter instead of hardcoded 0.5f
+        yield return new WaitForSeconds(stayDuration);
 
         elapsed = 0;
         while (elapsed < fadeOutTime)
@@ -116,6 +139,8 @@ public class LightingSwitcher : MonoBehaviour
             if (yearHintText != null) SetYearTextAlpha(alpha);
             yield return null;
         }
+
+        _isSwitching = false; // End Transition
     }
 
     void SetYearTextAlpha(float alpha)
