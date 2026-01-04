@@ -6,6 +6,7 @@ public class ScreenFader : MonoBehaviour
 {
     private CanvasGroup _canvasGroup;
     public float fadeDuration = 1.0f;
+    public GameObject finalContent; // Object to activate after fade (e.g. Thanks Text)
 
     void Awake()
     {
