@@ -54,6 +54,8 @@ public class LightingSwitcher : MonoBehaviour
 
     void Update()
     {
+        if (inputBlocked) return;
+
         if (Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.JoystickButton4))
         {
             StopAllCoroutines();
@@ -61,7 +63,7 @@ public class LightingSwitcher : MonoBehaviour
         }
     }
 
-    IEnumerator PerformWorldSwitch()
+    public IEnumerator PerformWorldSwitch(bool? targetState = null, bool forceTeleport = false)
     {
         if (yearHintText != null)
             yearHintText.text = isDark ? pastText : presentText;
@@ -76,9 +78,16 @@ public class LightingSwitcher : MonoBehaviour
             yield return null;
         }
 
-        isDark = !isDark;
+        if (targetState.HasValue)
+        {
+            isDark = targetState.Value;
+        }
+        else
+        {
+            isDark = !isDark; // Default toggle behavior
+        }
 
-        if (teleportOnSwitch) TeleportPlayer();
+        if (teleportOnSwitch || forceTeleport) TeleportPlayer();
 
         ApplyLighting();
 
@@ -103,6 +112,12 @@ public class LightingSwitcher : MonoBehaviour
         yearHintText.color = c;
     }
 
+    public void SetRespawnPoint(Vector3 pos, Quaternion rot)
+    {
+        startPosition = pos;
+        startRotation = rot;
+    }
+
     void TeleportPlayer()
     {
         if (playerTransform == null) return;
@@ -110,6 +125,8 @@ public class LightingSwitcher : MonoBehaviour
         if (cc != null) cc.enabled = false;
         playerTransform.position = startPosition;
         playerTransform.rotation = startRotation;
+        
+        // Ensure physics reset?
         if (cc != null) cc.enabled = true;
     }
 
@@ -148,5 +165,23 @@ public class LightingSwitcher : MonoBehaviour
             RenderSettings.fog = false;
         }
         DynamicGI.UpdateEnvironment();
+    }
+
+    // --- New Methods for Game Flow ---
+
+    public bool inputBlocked = false;   // Set to true in Inspector if you want to start locked
+
+    public void SetInputBlocked(bool blocked)
+    {
+        inputBlocked = blocked;
+    }
+
+    public void ForceSetNight()
+    {
+        StopAllCoroutines(); // Stop any switching in progress
+        isDark = true;
+        ApplyLighting();
+        if (yearHintText != null) yearHintText.text = pastText;
+        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f; // Ensure fade is cleared
     }
 }
