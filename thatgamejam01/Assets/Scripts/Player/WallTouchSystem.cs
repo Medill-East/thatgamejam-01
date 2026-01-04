@@ -128,7 +128,11 @@ public class WallTouchSystem : MonoBehaviour
         handModel.position = Vector3.Lerp(handModel.position, targetPos, Time.deltaTime * movementSpeed);
         handModel.rotation = Quaternion.Slerp(handModel.rotation, targetRot, Time.deltaTime * rotationSpeed);
 
-        TouchTrace(targetPos, hit.collider);
+        // Only paint if the hand is actually close to the surface
+        if (Vector3.Distance(handModel.position, targetPos) < 0.15f)
+        {
+            TouchTrace(targetPos, hit.collider);
+        }
     }
 
     void RetractHand()
